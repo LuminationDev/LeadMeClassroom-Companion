@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="android.view.View"/>
+        <import type="com.lumination.leadmeweb_companion.ui.login.LoginViewModel" />
+        <variable
+            name="login"
+            type="com.lumination.leadmeweb_companion.ui.login.LoginViewModel" />
+
+        <import type="com.lumination.leadmeweb_companion.ui.main.MainViewModel" />
+        <variable
+            name="main"
+            type="com.lumination.leadmeweb_companion.ui.main.MainViewModel" />
+    </data>
+
+    <com.google.android.flexbox.FlexboxLayout
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.main.MainFragment">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{`Room code: ` + login.roomCode}"/>
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:justifyContent="center"
+            app:alignItems="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{`Welcome! ` + main.username}"/>
+        </com.google.android.flexbox.FlexboxLayout>
+
+    </com.google.android.flexbox.FlexboxLayout>
+</layout>
