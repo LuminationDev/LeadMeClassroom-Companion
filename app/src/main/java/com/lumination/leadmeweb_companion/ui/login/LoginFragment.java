@@ -18,9 +18,12 @@ import com.alimuzaffar.lib.pin.PinEntryEditText;
 import com.lumination.leadmeweb_companion.MainActivity;
 import com.lumination.leadmeweb_companion.R;
 import com.lumination.leadmeweb_companion.databinding.FragmentLoginBinding;
+import com.lumination.leadmeweb_companion.interfaces.StringCallbackInterface;
 import com.lumination.leadmeweb_companion.managers.DialogManager;
 import com.lumination.leadmeweb_companion.services.FirebaseService;
 import com.lumination.leadmeweb_companion.ui.main.MainFragment;
+
+import java.util.ArrayList;
 
 public class LoginFragment extends Fragment {
     private static final String TAG = "LoginFragment";
@@ -43,7 +46,7 @@ public class LoginFragment extends Fragment {
         binding = DataBindingUtil.bind(view);
 
         //Track as the code is input into the pin entry area
-        PinEntryEditText text = (PinEntryEditText) view.findViewById(R.id.room_code);
+        PinEntryEditText text = view.findViewById(R.id.room_code);
         text.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -85,11 +88,15 @@ public class LoginFragment extends Fragment {
         Log.e("ROOM CODE", "Code: " + mViewModel.getRoomCode().getValue());
         //FirebaseService.connectToRoom();
 
-        DialogManager.createBasicInputDialog("Username", "Please enter your name.", null);
+        StringCallbackInterface setUsernameCallback = username -> {
+            MainFragment.mViewModel.setUsername(username);
 
-        //TODO Move this into the Firebase service when it is up and running.
-//        MainActivity.fragmentManager.beginTransaction()
-//                .replace(R.id.container, MainFragment.class, null)
-//                .commitNow();
+            //TODO Move this into the Firebase service when it is up and running.
+            MainActivity.fragmentManager.beginTransaction()
+                    .replace(R.id.container, MainFragment.class, null)
+                    .commitNow();
+        };
+
+        DialogManager.createBasicInputDialog("Username", "Please enter your name.", setUsernameCallback);
     }
 }

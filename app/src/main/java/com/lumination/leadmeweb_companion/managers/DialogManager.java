@@ -31,13 +31,12 @@ public class DialogManager {
 
         Button confirmButton = basicDialogView.findViewById(R.id.confirm_button);
         confirmButton.setOnClickListener(w -> {
+            stringCallbackInterface.callback(editText.getText().toString());
             basicDialog.dismiss();
         });
 
         Button cancelButton = basicDialogView.findViewById(R.id.cancel_button);
-        cancelButton.setOnClickListener(w -> {
-            basicDialog.dismiss();
-        });
+        cancelButton.setOnClickListener(w -> basicDialog.dismiss());
 
         basicDialog.show();
         basicDialog.getWindow().setLayout(680, 680);

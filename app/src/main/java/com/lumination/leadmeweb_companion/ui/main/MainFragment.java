@@ -1,6 +1,6 @@
 package com.lumination.leadmeweb_companion.ui.main;
 
-import androidx.lifecycle.ViewModelProvider;
+import androidx.databinding.DataBindingUtil;
 
 import android.os.Bundle;
 
@@ -13,27 +13,32 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.lumination.leadmeweb_companion.R;
+import com.lumination.leadmeweb_companion.databinding.FragmentMainBinding;
 
 public class MainFragment extends Fragment {
 
-    private MainViewModel mViewModel;
-
+    private FragmentMainBinding binding;
+    public static MainViewModel mViewModel;
     public static MainFragment newInstance() {
         return new MainFragment();
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(MainViewModel.class);
-        // TODO: Use the ViewModel
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        binding.setLifecycleOwner(getViewLifecycleOwner());
+        binding.setMain(mViewModel);
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_main, container, false);
-    }
 
+        View view = inflater.inflate(R.layout.fragment_main, container, false);
+        binding = DataBindingUtil.bind(view);
+
+        return view;
+    }
 }

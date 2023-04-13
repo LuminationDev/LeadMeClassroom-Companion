@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -14,6 +15,11 @@ import android.os.Looper;
 import com.lumination.leadmeweb_companion.services.FirebaseService;
 import com.lumination.leadmeweb_companion.ui.login.LoginFragment;
 import com.lumination.leadmeweb_companion.ui.login.LoginViewModel;
+import com.lumination.leadmeweb_companion.ui.main.MainFragment;
+import com.lumination.leadmeweb_companion.ui.main.MainViewModel;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
     public static MainActivity instance;
@@ -51,6 +57,9 @@ public class MainActivity extends AppCompatActivity {
             setupFragmentManager();
         }
 
+        //Load up the installed packages
+        CollectInstalledPackages();
+
         instance = this;
     }
 
@@ -59,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
      * fragment is loaded.
      */
     private void preloadViewModels() {
+        MainFragment.mViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         LoginFragment.mViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
     }
 
@@ -95,5 +105,22 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return false;
+    }
+
+    /**
+     * Query the device for the currently installed packages. Extract the packages names so they
+     * can be sent to the teacher.
+     */
+    private void CollectInstalledPackages() {
+        Intent intent = new Intent(Intent.ACTION_MAIN, null);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        List<ResolveInfo> rawAppList = getApplicationContext()
+                .getPackageManager()
+                .queryIntentActivities(intent, 0);
+
+        List<String> packages = rawAppList.stream()
+                .map(info -> info.activityInfo.packageName).collect(Collectors.toList());
+
+        MainFragment.mViewModel.setInstalledPackages(packages);
     }
 }
