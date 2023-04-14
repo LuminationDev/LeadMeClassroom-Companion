@@ -4,15 +4,10 @@
 
     <data>
         <import type="android.view.View"/>
-        <import type="com.lumination.leadmeweb_companion.ui.login.LoginViewModel" />
-        <variable
-            name="login"
-            type="com.lumination.leadmeweb_companion.ui.login.LoginViewModel" />
-
-        <import type="com.lumination.leadmeweb_companion.ui.main.MainViewModel" />
+        <import type="com.lumination.leadmeclassroom_companion.ui.main.MainViewModel" />
         <variable
             name="main"
-            type="com.lumination.leadmeweb_companion.ui.main.MainViewModel" />
+            type="com.lumination.leadmeclassroom_companion.ui.main.MainViewModel" />
     </data>
 
     <com.google.android.flexbox.FlexboxLayout
@@ -20,16 +15,20 @@
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingHorizontal="30dp"
+        app:flexDirection="column"
+        app:justifyContent="space_between"
         tools:context=".ui.main.MainFragment">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{`Room code: ` + login.roomCode}"/>
+            android:layout_marginTop="30dp"
+            android:text="@{`Room code: ` + main.roomCode}"/>
 
         <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             app:justifyContent="center"
             app:alignItems="center">
 
@@ -39,5 +38,34 @@
                 android:text="@{`Welcome! ` + main.username}"/>
         </com.google.android.flexbox.FlexboxLayout>
 
+        <com.google.android.flexbox.FlexboxLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:flexDirection="column"
+            app:justifyContent="center"
+            app:alignItems="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{`Current task: ` + (main.currentPackage != `null` ? main.currentPackage : `Waiting for teacher..`)}"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/launch_button"
+                android:layout_width="228dp"
+                android:layout_height="60dp"
+                android:layout_marginVertical="30dp"
+                android:elevation="0dp"
+                android:letterSpacing="0"
+                android:stateListAnimator="@null"
+                android:text="@string/launch"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:backgroundTint="@{main.currentPackage != `null` ? @color/blue : @color/grey, default=@color/grey}"
+                android:enabled="@{main.currentPackage != `null`}"
+                app:cornerRadius="10dp"
+                app:layout_flexShrink="0"
+                app:rippleColor="@color/grey" />
+        </com.google.android.flexbox.FlexboxLayout>
     </com.google.android.flexbox.FlexboxLayout>
-</layout>
+</layout >

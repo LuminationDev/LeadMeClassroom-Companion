@@ -46,6 +46,7 @@
         <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
             app:alignItems="center"
             app:flexDirection="column">
 
@@ -59,7 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:autofillHints=""
-                android:inputType="text" />
+                android:inputType="textCapSentences"/>
         </com.google.android.flexbox.FlexboxLayout>
 
         <com.google.android.flexbox.FlexboxLayout
@@ -99,7 +100,7 @@
                 android:backgroundTint="@color/grey"
                 app:cornerRadius="10dp"
                 app:layout_flexShrink="0"
-                app:rippleColor="@color/grey" />
+                app:rippleColor="@color/white" />
         </com.google.android.flexbox.FlexboxLayout>
 
     </com.google.android.flexbox.FlexboxLayout>

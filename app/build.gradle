@@ -1,15 +1,14 @@
 plugins {
     id 'com.android.application'
-    //TODO setup google-services.json
-    //id 'com.google.gms.google-services'
+    id 'com.google.gms.google-services'
 }
 
 android {
-    namespace 'com.lumination.leadmeweb_companion'
+    namespace 'com.lumination.leadmeclassroom_companion'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.lumination.leadmeweb_companion"
+        applicationId "com.lumination.leadmeclassroom_companion"
         minSdk 30
         targetSdk 33
         versionCode 1
@@ -36,17 +35,21 @@ android {
 }
 
 dependencies {
+    implementation platform('com.google.firebase:firebase-bom:31.3.0')
+
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
 
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
 
     //Firebase
     implementation 'com.google.firebase:firebase-core:21.1.1'
     implementation 'com.google.firebase:firebase-database:20.1.0'
+    implementation 'com.google.firebase:firebase-analytics'
 
     //Pin input
     implementation ('com.alimuzaffar.lib:pinentryedittext:2.0.6') {

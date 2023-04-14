@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.REQUEST_ROLE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.REORDER_TASKS" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -10,15 +14,15 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.LeadMeWebCompanion"
-        tools:targetApi="31">
+        android:theme="@style/Theme.LeadMeClassroomCompanion"
+        tools:targetApi="33">
         <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.app.role.Assistant"/>
             </intent-filter>
 
             <meta-data
@@ -31,6 +35,19 @@
             android:name=".services.FirebaseService"
             android:foregroundServiceType="connectedDevice"
             android:stopWithTask="true"/>
+
+        <service
+            android:enabled="true"
+            android:name=".services.LeadMeService"
+            android:foregroundServiceType="connectedDevice"
+            android:stopWithTask="true"/>
     </application>
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.action.LAUNCHER" />
+        </intent>
+    </queries>
 
 </manifest>

@@ -1,29 +1,29 @@
-package com.lumination.leadmeweb_companion.ui.login;
+package com.lumination.leadmeclassroom_companion.ui.login;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 public class LoginViewModel extends ViewModel {
-    private MutableLiveData<String> roomCode;
-    private MutableLiveData<String> errorCode;
+    private MutableLiveData<String> loginCode = new MutableLiveData<>();
+    private MutableLiveData<String> errorCode = new MutableLiveData<>();
 
     /**
-     * Get the room code that was entered.
+     * Get the login code that was entered for an attempted connection.
      */
-    public LiveData<String> getRoomCode() {
-        if (roomCode == null) {
-            roomCode = new MutableLiveData<>();
+    public LiveData<String> getLoginCode() {
+        if (loginCode == null) {
+            loginCode = new MutableLiveData<>();
         }
 
-        return roomCode;
+        return loginCode;
     }
 
     /**
-     * Set the room code for the duration of the activity.
+     * Set the login code for a connection attempt.
      */
-    public void setRoomCode(String newValue) {
-        roomCode.setValue(newValue);
+    public void setLoginCode(String newValue) {
+        loginCode.setValue(newValue);
     }
 
     /**

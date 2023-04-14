@@ -4,10 +4,10 @@
 
     <data>
         <import type="android.view.View"/>
-        <import type="com.lumination.leadmeweb_companion.ui.login.LoginViewModel" />
+        <import type="com.lumination.leadmeclassroom_companion.ui.login.LoginViewModel" />
         <variable
             name="login"
-            type="com.lumination.leadmeweb_companion.ui.login.LoginViewModel" />
+            type="com.lumination.leadmeclassroom_companion.ui.login.LoginViewModel" />
     </data>
 
     <com.google.android.flexbox.FlexboxLayout
@@ -35,12 +35,11 @@
             android:layout_gravity="center_horizontal"
             android:maxLength="4"
             android:textIsSelectable="true"
-            android:digits="1234567890"
             android:hint=""
-            android:inputType="number"
+            android:inputType="text"
             android:cursorVisible="false"
             android:layoutDirection="ltr"
-            android:text="@{login.roomCode}"
+            android:text="@{login.loginCode}"
             app:pinBackgroundDrawable="@drawable/background_pin_input"
             app:pinBackgroundIsSquare="false"
             app:pinLineColors="@color/black"
@@ -58,8 +57,8 @@
             android:text="@string/connect"
             android:textAllCaps="false"
             android:textColor="@color/white"
-            android:backgroundTint="@{login.roomCode.length == 4 ? @color/blue : @color/grey, default=@color/grey}"
-            android:enabled="@{login.roomCode.length == 4}"
+            android:backgroundTint="@{login.loginCode.length == 4 ? @color/blue : @color/grey, default=@color/grey}"
+            android:enabled="@{login.loginCode.length == 4}"
             app:cornerRadius="10dp"
             app:layout_flexShrink="0"
             app:rippleColor="@color/grey" />
@@ -67,7 +66,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="50dp"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/red_error"
             android:visibility="@{login.errorCode.length > 0 ? View.VISIBLE : View.INVISIBLE}"
             android:text="@{login.errorCode}" />
 

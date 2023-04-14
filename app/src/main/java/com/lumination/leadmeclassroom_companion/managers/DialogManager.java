@@ -1,4 +1,4 @@
-package com.lumination.leadmeweb_companion.managers;
+package com.lumination.leadmeclassroom_companion.managers;
 
 import android.view.View;
 import android.widget.Button;
@@ -7,9 +7,9 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 
-import com.lumination.leadmeweb_companion.MainActivity;
-import com.lumination.leadmeweb_companion.R;
-import com.lumination.leadmeweb_companion.interfaces.StringCallbackInterface;
+import com.lumination.leadmeclassroom_companion.MainActivity;
+import com.lumination.leadmeclassroom_companion.R;
+import com.lumination.leadmeclassroom_companion.interfaces.StringCallbackInterface;
 
 public class DialogManager {
     /**
@@ -31,15 +31,17 @@ public class DialogManager {
 
         Button confirmButton = basicDialogView.findViewById(R.id.confirm_button);
         confirmButton.setOnClickListener(w -> {
-            basicDialog.dismiss();
+            stringCallbackInterface.callback(editText.getText().toString());
+
+            MainActivity.runOnUIDelay(basicDialog::dismiss, 200);
         });
 
         Button cancelButton = basicDialogView.findViewById(R.id.cancel_button);
-        cancelButton.setOnClickListener(w -> {
-            basicDialog.dismiss();
-        });
+        cancelButton.setOnClickListener(w -> MainActivity.runOnUIDelay(basicDialog::dismiss, 200));
 
         basicDialog.show();
         basicDialog.getWindow().setLayout(680, 680);
+
+        editText.requestFocus();
     }
 }

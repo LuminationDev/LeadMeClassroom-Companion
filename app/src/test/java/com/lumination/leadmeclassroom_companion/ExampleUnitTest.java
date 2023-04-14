@@ -1,4 +1,4 @@
-package com.lumination.leadmeweb_companion;
+package com.lumination.leadmeclassroom_companion;
 
 import org.junit.Test;
 
