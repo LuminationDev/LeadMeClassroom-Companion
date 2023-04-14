@@ -61,6 +61,18 @@
                 android:layout_height="60dp"
                 android:autofillHints=""
                 android:inputType="textCapSentences"/>
+
+            <TextView
+                android:id="@+id/error_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:paddingHorizontal="25dp"
+                android:text="@string/placeholder_error_text"
+                android:textSize="11sp"
+                android:textAlignment="center"
+                android:textColor="@color/red_error"
+                android:visibility="gone"/>
         </com.google.android.flexbox.FlexboxLayout>
 
         <com.google.android.flexbox.FlexboxLayout

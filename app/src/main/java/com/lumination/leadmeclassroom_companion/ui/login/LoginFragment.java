@@ -30,7 +30,7 @@ public class LoginFragment extends Fragment {
     public static LoginViewModel mViewModel;
     private FragmentLoginBinding binding;
 
-    public static LoginFragment instance;
+    private static LoginFragment instance;
     public static LoginFragment getInstance() { return instance; }
 
     @Override

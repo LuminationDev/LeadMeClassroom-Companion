@@ -29,11 +29,18 @@ public class DialogManager {
         //Show only if required (if there is a callback provided)
         EditText editText = basicDialogView.findViewById(R.id.text_entry);
 
+        TextView error = basicDialogView.findViewById(R.id.error_text);
+
         Button confirmButton = basicDialogView.findViewById(R.id.confirm_button);
         confirmButton.setOnClickListener(w -> {
-            stringCallbackInterface.callback(editText.getText().toString());
-
-            MainActivity.runOnUIDelay(basicDialog::dismiss, 200);
+            if(editText.getText() != null) {
+                error.setVisibility(View.GONE);
+                stringCallbackInterface.callback(editText.getText().toString()); //TODO eventually add name filter
+                MainActivity.runOnUIDelay(basicDialog::dismiss, 200);
+            } else {
+                error.setText(R.string.required_username);
+                error.setVisibility(View.VISIBLE);
+            }
         });
 
         Button cancelButton = basicDialogView.findViewById(R.id.cancel_button);
