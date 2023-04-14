@@ -50,8 +50,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //TODO needs to have google-services.json added
-        //startFirebaseService();
+        startFirebaseService();
         startLeadMeService();
         preloadViewModels();
 
@@ -63,9 +62,6 @@ public class MainActivity extends AppCompatActivity {
         CollectInstalledPackages();
 
         instance = this;
-
-        //runOnUIDelay(() -> PackageManager.ChangeActivePackage("com.android.settings"), 5000);
-        //runOnUIDelay(() -> PackageManager.ChangeActivePackage("com.lumination.leadmeweb_companion"), 10000);
     }
 
     /**

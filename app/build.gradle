@@ -1,7 +1,6 @@
 plugins {
     id 'com.android.application'
-    //TODO setup google-services.json
-    //id 'com.google.gms.google-services'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -36,6 +35,8 @@ android {
 }
 
 dependencies {
+    implementation platform('com.google.firebase:firebase-bom:31.3.0')
+
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
@@ -48,6 +49,7 @@ dependencies {
     //Firebase
     implementation 'com.google.firebase:firebase-core:21.1.1'
     implementation 'com.google.firebase:firebase-database:20.1.0'
+    implementation 'com.google.firebase:firebase-analytics'
 
     //Pin input
     implementation ('com.alimuzaffar.lib:pinentryedittext:2.0.6') {
