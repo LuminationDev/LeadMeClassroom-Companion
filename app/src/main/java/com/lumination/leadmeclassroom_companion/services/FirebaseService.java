@@ -18,8 +18,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.lumination.leadmeclassroom_companion.MainActivity;
 import com.lumination.leadmeclassroom_companion.R;
+import com.lumination.leadmeclassroom_companion.interfaces.StringCallbackInterface;
+import com.lumination.leadmeclassroom_companion.managers.DialogManager;
 import com.lumination.leadmeclassroom_companion.ui.login.LoginFragment;
+import com.lumination.leadmeclassroom_companion.ui.main.MainFragment;
 
 /**
  * A service class responsible for maintain listeners on firebase collections.
@@ -31,6 +35,7 @@ public class FirebaseService extends Service {
 
     private static final DatabaseReference database = getDatabase();
     private static DatabaseReference roomReference;
+    private static String roomCode;
 
     // Binder given to clients
     private final IBinder binder = new LocalBinder();
@@ -112,13 +117,13 @@ public class FirebaseService extends Service {
     public static void connectToRoom()
     {
         //Check that the room code is available and not null
-        String roomCode = LoginFragment.mViewModel.getLoginCode().getValue();
+        roomCode = LoginFragment.mViewModel.getLoginCode().getValue();
         if(roomCode == null) {
             LoginFragment.mViewModel.setErrorCode("Room code not entered.");
             return;
         }
 
-        roomReference = database.child(roomCode).child("room");
+        roomReference = database.child("classCode").child(roomCode);
         roomReference.addListenerForSingleValueEvent(roomListener);
 
         //Add other listeners below
@@ -135,17 +140,23 @@ public class FirebaseService extends Service {
     }
 
     /**
-     * A listener function that is attached to an active room. This listens for
+     * A listener function that is attached to an active room. This checks if the room is
      */
-    static ValueEventListener roomListener = new ValueEventListener() {
+    private static final ValueEventListener roomListener = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
             if (snapshot.exists()) {
                 LoginFragment.mViewModel.setErrorCode("");
 
-                //Do something here
+                StringCallbackInterface setUsernameCallback = username -> {
+                    MainFragment.mViewModel.setRoomCode(roomCode);
+                    MainFragment.mViewModel.setUsername(username);
+                    MainActivity.fragmentManager.beginTransaction()
+                            .replace(R.id.container, MainFragment.class, null)
+                            .commitNow();
+                };
 
-                //Move to the main fragment
+                DialogManager.createBasicInputDialog("Username", "Please enter your name.", setUsernameCallback);
 
             } else {
                 LoginFragment.mViewModel.setErrorCode("Room not found. Try again");
@@ -155,6 +166,7 @@ public class FirebaseService extends Service {
         @Override
         public void onCancelled(@NonNull DatabaseError error) {
             Log.e(TAG, "Database connection cancelled.");
+            LoginFragment.mViewModel.setErrorCode("Connection issue. Try again later");
         }
     };
 }

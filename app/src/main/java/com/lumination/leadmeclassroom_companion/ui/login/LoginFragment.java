@@ -20,6 +20,7 @@ import com.lumination.leadmeclassroom_companion.R;
 import com.lumination.leadmeclassroom_companion.databinding.FragmentLoginBinding;
 import com.lumination.leadmeclassroom_companion.interfaces.StringCallbackInterface;
 import com.lumination.leadmeclassroom_companion.managers.DialogManager;
+import com.lumination.leadmeclassroom_companion.services.FirebaseService;
 import com.lumination.leadmeclassroom_companion.ui.main.MainFragment;
 
 public class LoginFragment extends Fragment {
@@ -86,18 +87,6 @@ public class LoginFragment extends Fragment {
      */
     private void submitRoomCode() {
         Log.e("ROOM CODE", "Code: " + mViewModel.getLoginCode().getValue());
-        //FirebaseService.connectToRoom();
-
-        StringCallbackInterface setUsernameCallback = username -> {
-            MainFragment.mViewModel.setRoomCode(mViewModel.getLoginCode().getValue());
-            MainFragment.mViewModel.setUsername(username);
-
-            //TODO Move this into the Firebase service when it is up and running.
-            MainActivity.fragmentManager.beginTransaction()
-                    .replace(R.id.container, MainFragment.class, null)
-                    .commitNow();
-        };
-
-        DialogManager.createBasicInputDialog("Username", "Please enter your name.", setUsernameCallback);
+        FirebaseService.connectToRoom();
     }
 }

@@ -52,7 +52,6 @@ public class LeadMeService extends Service {
     public void onCreate() {
         super.onCreate();
 
-
         //If there is a saved room code, automatically connect?
     }
 

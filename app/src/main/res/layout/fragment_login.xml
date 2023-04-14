@@ -35,9 +35,8 @@
             android:layout_gravity="center_horizontal"
             android:maxLength="4"
             android:textIsSelectable="true"
-            android:digits="1234567890"
             android:hint=""
-            android:inputType="number"
+            android:inputType="text"
             android:cursorVisible="false"
             android:layoutDirection="ltr"
             android:text="@{login.loginCode}"
@@ -67,7 +66,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="50dp"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/red_error"
             android:visibility="@{login.errorCode.length > 0 ? View.VISIBLE : View.INVISIBLE}"
             android:text="@{login.errorCode}" />
 
