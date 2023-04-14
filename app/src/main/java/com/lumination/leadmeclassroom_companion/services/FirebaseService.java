@@ -1,4 +1,4 @@
-package com.lumination.leadmeweb_companion.services;
+package com.lumination.leadmeclassroom_companion.services;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -18,8 +18,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.lumination.leadmeweb_companion.R;
-import com.lumination.leadmeweb_companion.ui.login.LoginFragment;
+import com.lumination.leadmeclassroom_companion.R;
+import com.lumination.leadmeclassroom_companion.ui.login.LoginFragment;
 
 /**
  * A service class responsible for maintain listeners on firebase collections.
@@ -112,7 +112,7 @@ public class FirebaseService extends Service {
     public static void connectToRoom()
     {
         //Check that the room code is available and not null
-        String roomCode = LoginFragment.mViewModel.getRoomCode().getValue();
+        String roomCode = LoginFragment.mViewModel.getLoginCode().getValue();
         if(roomCode == null) {
             LoginFragment.mViewModel.setErrorCode("Room code not entered.");
             return;

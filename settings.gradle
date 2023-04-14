@@ -12,5 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "LeadMeWeb-Companion"
+rootProject.name = "LeadMeClassroom-Companion"
 include ':app'

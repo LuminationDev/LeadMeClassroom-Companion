@@ -1,33 +1,34 @@
-package com.lumination.leadmeweb_companion;
+package com.lumination.leadmeclassroom_companion;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.ViewModelProvider;
-
-import android.app.ActivityManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.lumination.leadmeweb_companion.services.FirebaseService;
-import com.lumination.leadmeweb_companion.ui.login.LoginFragment;
-import com.lumination.leadmeweb_companion.ui.login.LoginViewModel;
-import com.lumination.leadmeweb_companion.ui.main.MainFragment;
-import com.lumination.leadmeweb_companion.ui.main.MainViewModel;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.lumination.leadmeclassroom_companion.services.FirebaseService;
+import com.lumination.leadmeclassroom_companion.services.LeadMeService;
+import com.lumination.leadmeclassroom_companion.ui.login.LoginFragment;
+import com.lumination.leadmeclassroom_companion.ui.login.LoginViewModel;
+import com.lumination.leadmeclassroom_companion.ui.main.MainFragment;
+import com.lumination.leadmeclassroom_companion.ui.main.MainViewModel;
+import com.lumination.leadmeclassroom_companion.utilities.Constants;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
-    public static MainActivity instance;
+    private static MainActivity instance;
     public static MainActivity getInstance() { return instance; }
 
     public static Handler UIHandler;
     static { UIHandler = new Handler(Looper.getMainLooper()); }
     public static FragmentManager fragmentManager;
+    public ViewModelProvider viewModelProvider;
 
     /**
      * un a function on the main UI thread.
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
         //TODO needs to have google-services.json added
         //startFirebaseService();
+        startLeadMeService();
         preloadViewModels();
 
         if (savedInstanceState == null) {
@@ -61,6 +63,9 @@ public class MainActivity extends AppCompatActivity {
         CollectInstalledPackages();
 
         instance = this;
+
+        //runOnUIDelay(() -> PackageManager.ChangeActivePackage("com.android.settings"), 5000);
+        //runOnUIDelay(() -> PackageManager.ChangeActivePackage("com.lumination.leadmeweb_companion"), 10000);
     }
 
     /**
@@ -68,8 +73,11 @@ public class MainActivity extends AppCompatActivity {
      * fragment is loaded.
      */
     private void preloadViewModels() {
-        MainFragment.mViewModel = new ViewModelProvider(this).get(MainViewModel.class);
-        LoginFragment.mViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
+        // Store a reference to the ViewModelProvider
+        viewModelProvider = new ViewModelProvider(this);
+
+        LoginFragment.mViewModel = viewModelProvider.get(LoginViewModel.class);
+        MainFragment.mViewModel = viewModelProvider.get(MainViewModel.class);
     }
 
     /**
@@ -84,27 +92,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Start the LeadMe service.
+     */
+    private void startLeadMeService() {
+        Intent leadMe_intent = new Intent(getApplicationContext(), LeadMeService.class);
+        leadMe_intent.setAction(Constants.ACTION_FOREGROUND);
+        startService(leadMe_intent);
+    }
+
+    /**
      * Start the firebase service.
      */
     private void startFirebaseService() {
         Intent network_intent = new Intent(getApplicationContext(), FirebaseService.class);
         startForegroundService(network_intent);
-    }
-
-    /**
-     * Detect if a service is currently running, this would be used in case of a restart or non-fatal
-     * crash.
-     * @param serviceClass The type of service class that is being queried.
-     * @return A boolean for if the supplied class is running.
-     */
-    private boolean isServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**

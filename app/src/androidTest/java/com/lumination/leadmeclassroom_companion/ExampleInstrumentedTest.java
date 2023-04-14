@@ -1,4 +1,4 @@
-package com.lumination.leadmeweb_companion;
+package com.lumination.leadmeclassroom_companion;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.lumination.leadmeweb_companion", appContext.getPackageName());
+        assertEquals("com.lumination.leadmeclassroom_companion", appContext.getPackageName());
     }
 }

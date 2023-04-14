@@ -1,4 +1,4 @@
-package com.lumination.leadmeweb_companion.interfaces;
+package com.lumination.leadmeclassroom_companion.interfaces;
 
 public interface StringCallbackInterface {
     void callback(String param1);

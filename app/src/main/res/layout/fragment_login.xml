@@ -4,10 +4,10 @@
 
     <data>
         <import type="android.view.View"/>
-        <import type="com.lumination.leadmeweb_companion.ui.login.LoginViewModel" />
+        <import type="com.lumination.leadmeclassroom_companion.ui.login.LoginViewModel" />
         <variable
             name="login"
-            type="com.lumination.leadmeweb_companion.ui.login.LoginViewModel" />
+            type="com.lumination.leadmeclassroom_companion.ui.login.LoginViewModel" />
     </data>
 
     <com.google.android.flexbox.FlexboxLayout
@@ -40,7 +40,7 @@
             android:inputType="number"
             android:cursorVisible="false"
             android:layoutDirection="ltr"
-            android:text="@{login.roomCode}"
+            android:text="@{login.loginCode}"
             app:pinBackgroundDrawable="@drawable/background_pin_input"
             app:pinBackgroundIsSquare="false"
             app:pinLineColors="@color/black"
@@ -58,8 +58,8 @@
             android:text="@string/connect"
             android:textAllCaps="false"
             android:textColor="@color/white"
-            android:backgroundTint="@{login.roomCode.length == 4 ? @color/blue : @color/grey, default=@color/grey}"
-            android:enabled="@{login.roomCode.length == 4}"
+            android:backgroundTint="@{login.loginCode.length == 4 ? @color/blue : @color/grey, default=@color/grey}"
+            android:enabled="@{login.loginCode.length == 4}"
             app:cornerRadius="10dp"
             app:layout_flexShrink="0"
             app:rippleColor="@color/grey" />
