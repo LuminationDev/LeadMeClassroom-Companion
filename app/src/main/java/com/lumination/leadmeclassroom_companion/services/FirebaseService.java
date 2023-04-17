@@ -22,6 +22,7 @@ import com.lumination.leadmeclassroom_companion.MainActivity;
 import com.lumination.leadmeclassroom_companion.R;
 import com.lumination.leadmeclassroom_companion.interfaces.StringCallbackInterface;
 import com.lumination.leadmeclassroom_companion.managers.DialogManager;
+import com.lumination.leadmeclassroom_companion.models.Learner;
 import com.lumination.leadmeclassroom_companion.ui.login.LoginFragment;
 import com.lumination.leadmeclassroom_companion.ui.main.MainFragment;
 
@@ -106,7 +107,7 @@ public class FirebaseService extends Service {
      */
     private static DatabaseReference getDatabase()
     {
-        return FirebaseDatabase.getInstance("https://leafy-rope-301003-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference();
+        return FirebaseDatabase.getInstance("https://browserextension-bc94e-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference();
     }
 
     /**
@@ -123,10 +124,8 @@ public class FirebaseService extends Service {
             return;
         }
 
-        roomReference = database.child("classCode").child(roomCode);
+        roomReference = database.child("classCode").child(roomCode).child("classCode");
         roomReference.addListenerForSingleValueEvent(roomListener);
-
-        //Add other listeners below
     }
 
     /**
@@ -151,13 +150,15 @@ public class FirebaseService extends Service {
                 StringCallbackInterface setUsernameCallback = username -> {
                     MainFragment.mViewModel.setRoomCode(roomCode);
                     MainFragment.mViewModel.setUsername(username);
+
                     MainActivity.fragmentManager.beginTransaction()
                             .replace(R.id.container, MainFragment.class, null)
                             .commitNow();
+
+                    AddFollower(username);
                 };
 
                 DialogManager.createBasicInputDialog("Username", "Please enter your name.", setUsernameCallback);
-
             } else {
                 LoginFragment.mViewModel.setErrorCode("Room not found. Try again");
             }
@@ -169,4 +170,15 @@ public class FirebaseService extends Service {
             LoginFragment.mViewModel.setErrorCode("Connection issue. Try again later");
         }
     };
+
+    private static void AddFollower(String username) {
+        //TODO finish this off
+        //Create a UUID and check it does not exist on firebase for the student assignment.
+
+        //Create an entry in firebase for the new Android user
+        Learner test = new Learner(username, "1234", MainFragment.mViewModel.getInstalledPackages().getValue());
+        database.child("androidFollowers").child(test.uuid).setValue(test);
+
+        //Add the additional firebase listeners
+    }
 }

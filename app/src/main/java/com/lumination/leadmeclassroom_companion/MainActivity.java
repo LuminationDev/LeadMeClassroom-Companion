@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.lumination.leadmeclassroom_companion.managers.PackageManager;
 import com.lumination.leadmeclassroom_companion.services.FirebaseService;
 import com.lumination.leadmeclassroom_companion.services.LeadMeService;
 import com.lumination.leadmeclassroom_companion.ui.login.LoginFragment;
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         startFirebaseService();
@@ -62,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
         CollectInstalledPackages();
 
         instance = this;
+
+        //runOnUIDelay(() -> PackageManager.ChangeActivePackage("com.android.settings"), 4000);
     }
 
     /**

@@ -69,32 +69,10 @@ public class LeadMeService extends Service {
     }
 
     public void startForeground() {
-        if (lastIntent.getAction().equals(Constants.ACTION_FOREGROUND)) {
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
-                    CHANNEL_NAME,
-                    NotificationManager.IMPORTANCE_NONE);
-            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            assert manager != null;
-            manager.createNotificationChannel(channel);
-            final int notificationId = (int) System.currentTimeMillis();
-
-            PendingIntent pReturnIntent = createPendingIntent(Constants.ACTION_RETURN);
-            PendingIntent pDisconnectIntent = createPendingIntent(Constants.ACTION_DISCONNECT);
-
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
-            Notification notification = notificationBuilder
-                    .setOngoing(true)
-                    .setSmallIcon(R.drawable.ic_launcher_foreground)
-                    .setContentTitle("LeadMe Companion Connected")
-                    .setPriority(NotificationManager.IMPORTANCE_DEFAULT)
-                    .setCategory(Notification.CATEGORY_SERVICE)
-                    .addAction(android.R.drawable.ic_menu_revert,
-                            "Return", pReturnIntent)
-                    .addAction(android.R.drawable.ic_menu_revert,
-                            "Disconnect", pDisconnectIntent)
-                    .build();
-
-            startForeground(notificationId, notification);
+        if(lastIntent == null) { //Null check first
+            CreateNotificationChannel();
+        } else if (lastIntent.getAction().equals(Constants.ACTION_FOREGROUND)) {
+            CreateNotificationChannel();
         } else {
             Log.e(TAG, "Action: " + lastIntent.getAction());
 
@@ -110,6 +88,34 @@ public class LeadMeService extends Service {
                 Log.e(TAG, "Disconnect clicked: REMOVE USER FROM FIREBASE");
             }
         }
+    }
+
+    private void CreateNotificationChannel() {
+        NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
+                CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_NONE);
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        assert manager != null;
+        manager.createNotificationChannel(channel);
+        final int notificationId = (int) System.currentTimeMillis();
+
+        PendingIntent pReturnIntent = createPendingIntent(Constants.ACTION_RETURN);
+        PendingIntent pDisconnectIntent = createPendingIntent(Constants.ACTION_DISCONNECT);
+
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
+        Notification notification = notificationBuilder
+                .setOngoing(true)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle("LeadMe Companion Connected")
+                .setPriority(NotificationManager.IMPORTANCE_DEFAULT)
+                .setCategory(Notification.CATEGORY_SERVICE)
+                .addAction(android.R.drawable.ic_menu_revert,
+                        "Return", pReturnIntent)
+                .addAction(android.R.drawable.ic_menu_revert,
+                        "Disconnect", pDisconnectIntent)
+                .build();
+
+        startForeground(notificationId, notification);
     }
 
     /**
