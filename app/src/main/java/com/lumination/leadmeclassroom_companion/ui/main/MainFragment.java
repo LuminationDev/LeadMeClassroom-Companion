@@ -18,7 +18,7 @@ public class MainFragment extends Fragment {
     private FragmentMainBinding binding;
     public static MainViewModel mViewModel;
 
-    public static MainFragment instance;
+    private static MainFragment instance;
     public static MainFragment getInstance() { return instance; }
 
     @Override

@@ -7,4 +7,7 @@
     <string name="placeholder_content_text">Content Text</string>
     <string name="placeholder_title">Title</string>
     <string name="launch">Launch</string>
+    <string name="placeholder_error_text">Error Text</string>
+    <string name="required_username">Username is required.</string>
+    <string name="room_code">Room Code</string>
 </resources>
