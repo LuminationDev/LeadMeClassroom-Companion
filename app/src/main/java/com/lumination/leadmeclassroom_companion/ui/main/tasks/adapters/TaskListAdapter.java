@@ -11,7 +11,6 @@ import com.lumination.leadmeclassroom_companion.R;
 import com.lumination.leadmeclassroom_companion.databinding.CardListTaskBinding;
 import com.lumination.leadmeclassroom_companion.models.Task;
 import com.lumination.leadmeclassroom_companion.ui.main.dashboard.DashboardFragment;
-import com.lumination.leadmeclassroom_companion.ui.main.tasks.TaskSelectionFragment;
 import com.lumination.leadmeclassroom_companion.ui.main.tasks.TaskSingleFragment;
 
 import java.util.ArrayList;

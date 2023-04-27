@@ -78,11 +78,11 @@ public class UsernameFragment extends Fragment {
     private void AddUserToFirebase() {
         //TODO valid user against name list?
 
+        FirebaseService.addFollower(DashboardFragment.mViewModel.getUsername().getValue());
+
         DashboardFragment.mViewModel.setRoomCode(FirebaseService.getRoomCode());
         MainActivity.fragmentManager.beginTransaction()
                 .replace(R.id.container, MainFragment.class, null)
                 .commitNow();
-
-        FirebaseService.addFollower(DashboardFragment.mViewModel.getUsername().getValue());
     }
 }

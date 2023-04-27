@@ -19,6 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.lumination.leadmeclassroom_companion.R;
+import com.lumination.leadmeclassroom_companion.managers.PackageManager;
 import com.lumination.leadmeclassroom_companion.models.Learner;
 import com.lumination.leadmeclassroom_companion.ui.login.LoginFragment;
 import com.lumination.leadmeclassroom_companion.ui.login.classcode.ClassCodeFragment;
@@ -35,7 +36,10 @@ public class FirebaseService extends Service {
 
     private static final DatabaseReference database = getDatabase();
     private static DatabaseReference roomReference;
+    private static DatabaseReference taskReference;
+    private static DatabaseReference packageReference;
     private static String roomCode;
+    private static String uuid = "1234";
 
     // Binder given to clients
     private final IBinder binder = new LocalBinder();
@@ -110,6 +114,14 @@ public class FirebaseService extends Service {
     }
 
     /**
+     * Get the valid room code.
+     * @return A string of the entered room code.
+     */
+    public static String getRoomCode() {
+        return roomCode;
+    }
+
+    /**
      * Attempt to add a listener to a leader's collection on firebase. The functions collects the
      * room code from the loginViewModel, any errors that occur will be set in the loginViewModel
      * and displayed to the user.
@@ -138,7 +150,7 @@ public class FirebaseService extends Service {
     }
 
     /**
-     * A listener function that is attached to an active room. This checks if the room is
+     * A listener function that is attached to an active room. This checks if the room exists.
      */
     private static final ValueEventListener roomListener = new ValueEventListener() {
         @Override
@@ -174,24 +186,72 @@ public class FirebaseService extends Service {
         //Create a UUID and check it does not exist on firebase for the student assignment.
 
         //Create an entry in firebase for the new Android user
-        Learner test = new Learner(username, "1234", DashboardFragment.mViewModel.getInstalledPackages().getValue());
+        Learner test = new Learner(username, uuid, DashboardFragment.mViewModel.getInstalledPackages().getValue());
         database.child("androidFollowers").child(test.uuid).setValue(test);
 
         //Add the additional firebase listeners
+        taskReference = database.child("androidFollowers").child(test.uuid).child("tasks");
+        taskReference.addValueEventListener(taskListener);
+
+        packageReference = database.child("androidFollowers").child(test.uuid).child("toLoadPackage");
+        packageReference.addValueEventListener(pushedPackageListener);
     }
+
+    /**
+     * A listener function that is attached to the allowed task list. This forms the list of
+     * packages that a student is allowed to visit.
+     */
+    private static final ValueEventListener taskListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            if(snapshot.exists()) {
+                Log.e("Task", snapshot.getValue().toString());
+            }
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+            Log.e(TAG, "Database connection cancelled.");
+        }
+    };
+
+    /**
+     * A listener function that is attached to the package that has been selected by a leader. The
+     * package is what the device should now load.
+     */
+    private static final ValueEventListener pushedPackageListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            if(snapshot.exists()) {
+                if(snapshot.getValue() != null) {
+                    String packageName = snapshot.getValue().toString();
+
+                    Log.e("Package", packageName);
+                    PackageManager.ChangeActivePackage(packageName);
+                }
+            }
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+            Log.e(TAG, "Database connection cancelled.");
+        }
+    };
 
     /**
      * Clear the firebase data associated with the user that is currently logging out.
      */
     public static void removeFollower() {
+        database.child("androidFollowers").child(uuid).removeValue();
 
-    }
-
-    /**
-     * Get the valid room code.
-     * @return A string of the entered room code.
-     */
-    public static String getRoomCode() {
-        return roomCode;
+        if(taskReference != null) {
+            taskReference.removeEventListener(taskListener);
+        }
+        if (packageReference != null) {
+            packageReference.removeEventListener(pushedPackageListener);
+        }
+        if (roomReference != null) {
+            roomReference.removeEventListener(roomListener);
+        }
     }
 }

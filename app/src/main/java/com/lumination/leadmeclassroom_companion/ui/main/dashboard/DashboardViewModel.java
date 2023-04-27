@@ -81,6 +81,8 @@ public class DashboardViewModel extends ViewModel {
      */
     public void setCurrentPackage(String newValue) {
         currentPackage.setValue(newValue);
+
+        //TODO Update firebase
     }
 
     /**
