@@ -10,13 +10,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.lumination.leadmeclassroom_companion.managers.PackageManager;
 import com.lumination.leadmeclassroom_companion.services.FirebaseService;
 import com.lumination.leadmeclassroom_companion.services.LeadMeService;
 import com.lumination.leadmeclassroom_companion.ui.login.LoginFragment;
-import com.lumination.leadmeclassroom_companion.ui.login.LoginViewModel;
-import com.lumination.leadmeclassroom_companion.ui.main.MainFragment;
-import com.lumination.leadmeclassroom_companion.ui.main.MainViewModel;
+import com.lumination.leadmeclassroom_companion.ui.login.classcode.ClassCodeFragment;
+import com.lumination.leadmeclassroom_companion.ui.login.classcode.ClassCodeViewModel;
+import com.lumination.leadmeclassroom_companion.ui.main.dashboard.DashboardFragment;
+import com.lumination.leadmeclassroom_companion.ui.main.dashboard.DashboardViewModel;
 import com.lumination.leadmeclassroom_companion.utilities.Constants;
 
 import java.util.List;
@@ -61,11 +61,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //Load up the installed packages
-        CollectInstalledPackages();
+        collectInstalledPackages();
 
         instance = this;
-
-        //runOnUIDelay(() -> PackageManager.ChangeActivePackage("com.android.settings"), 4000);
     }
 
     /**
@@ -76,8 +74,16 @@ public class MainActivity extends AppCompatActivity {
         // Store a reference to the ViewModelProvider
         viewModelProvider = new ViewModelProvider(this);
 
-        LoginFragment.mViewModel = viewModelProvider.get(LoginViewModel.class);
-        MainFragment.mViewModel = viewModelProvider.get(MainViewModel.class);
+        ClassCodeFragment.mViewModel = viewModelProvider.get(ClassCodeViewModel.class);
+        DashboardFragment.mViewModel = viewModelProvider.get(DashboardViewModel.class);
+    }
+
+    /**
+     * Reset the view model data fields back to the initial load in state.
+     */
+    private void clearViewModels() {
+        ClassCodeFragment.mViewModel.resetData();
+        DashboardFragment.mViewModel.resetData();
     }
 
     /**
@@ -112,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
      * Query the device for the currently installed packages. Extract the packages names so they
      * can be sent to the teacher.
      */
-    private void CollectInstalledPackages() {
+    private void collectInstalledPackages() {
         Intent intent = new Intent(Intent.ACTION_MAIN, null);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
         List<ResolveInfo> rawAppList = getApplicationContext()
@@ -122,6 +128,24 @@ public class MainActivity extends AppCompatActivity {
         List<String> packages = rawAppList.stream()
                 .map(info -> info.activityInfo.packageName).collect(Collectors.toList());
 
-        MainFragment.mViewModel.setInstalledPackages(packages);
+        DashboardFragment.mViewModel.setInstalledPackages(packages);
+    }
+
+    /**
+     * Remove the user from the Firebase collection, reset all view model data fields and then
+     * return to the login screen.
+     */
+    public void logout() {
+        // Remove from firebase
+        FirebaseService.removeFollower();
+
+        // Reset view models
+        clearViewModels();
+
+        // Return to the class code screen
+        fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        fragmentManager.beginTransaction()
+                .replace(R.id.container, LoginFragment.class, null)
+                .commitNow();
     }
 }

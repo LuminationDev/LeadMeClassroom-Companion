@@ -9,5 +9,12 @@
     <string name="launch">Launch</string>
     <string name="placeholder_error_text">Error Text</string>
     <string name="required_username">Username is required.</string>
-    <string name="room_code">Room Code</string>
+    <string name="room_code">Please enter the room code!</string>
+    <string name="enter">Enter</string>
+    <string name="leadme_icon">LeadMe icon</string>
+    <string name="hint">Hint</string>
+    <string name="enter_username">Please enter your name</string>
+    <string name="library">Library</string>
+    <string name="change_name">Change name</string>
+    <string name="logout">Logout</string>
 </resources>

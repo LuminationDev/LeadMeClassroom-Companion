@@ -51,9 +51,10 @@
             app:flexDirection="column">
 
             <TextView android:layout_width="match_parent"
+                android:id="@+id/input_hint"
                 android:layout_height="match_parent"
                 android:labelFor="@+id/text_entry"
-                android:text="@string/username"/>
+                android:text="@string/hint"/>
 
             <EditText
                 android:id="@+id/text_entry"

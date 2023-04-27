@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <import type="android.view.View"/>
+        <import type="com.lumination.leadmeclassroom_companion.models.Task" />
+        <variable
+            name="task"
+            type="com.lumination.leadmeclassroom_companion.models.Task" />
+    </data>
+
+    <com.google.android.flexbox.FlexboxLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background_card"
+        android:padding="60dp"
+        app:flexDirection="column"
+        app:justifyContent="center"
+        app:alignItems="center">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:contentDescription="@string/leadme_icon"
+            android:src="@drawable/icon_col"
+            android:layout_marginBottom="32dp"/>
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:flexDirection="column">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:textColor="@color/black"
+                android:textSize="11sp"
+                android:text="@{task.type, default=`Media Type`}"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textFontWeight="700"
+                android:textColor="@color/black"
+                android:text="@{task.name, default=`App Name`}"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                android:text="@{task.packageName, default=`Package Name`}"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="45dp"
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                android:text="Tags TBA"/>
+        </com.google.android.flexbox.FlexboxLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/launch_button"
+            android:layout_width="228dp"
+            android:layout_height="60dp"
+            android:elevation="0dp"
+            android:letterSpacing="0"
+            android:stateListAnimator="@null"
+            android:text="@string/launch"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/blue"
+            app:cornerRadius="10dp"
+            app:layout_flexShrink="0"
+            app:rippleColor="@color/grey" />
+    </com.google.android.flexbox.FlexboxLayout>
+</layout>

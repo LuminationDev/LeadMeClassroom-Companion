@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="android.view.View"/>
+        <import type="com.lumination.leadmeclassroom_companion.ui.main.dashboard.DashboardViewModel" />
+        <variable
+            name="main"
+            type="com.lumination.leadmeclassroom_companion.ui.main.dashboard.DashboardViewModel" />
+    </data>
+
+    <com.google.android.flexbox.FlexboxLayout
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background_main"
+        android:padding="30dp"
+        app:flexDirection="column"
+        tools:context=".ui.main.dashboard.DashboardFragment">
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:flexDirection="column"
+            app:layout_flexShrink="0">
+
+            <com.google.android.flexbox.FlexboxLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:flexDirection="row"
+                app:justifyContent="space_between"
+                app:alignItems="center">
+
+                <com.google.android.flexbox.FlexboxLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/leadme_icon"
+                        android:src="@drawable/logo_leadme_icon"/>
+                </com.google.android.flexbox.FlexboxLayout>
+
+                <com.google.android.flexbox.FlexboxLayout
+                    android:id="@+id/side_menu_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/leadme_icon"
+                        android:src="@drawable/icon_menu_burger"/>
+                </com.google.android.flexbox.FlexboxLayout>
+            </com.google.android.flexbox.FlexboxLayout>
+
+            <com.google.android.flexbox.FlexboxLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="41dp"
+                android:layout_marginBottom="35dp"
+                app:flexDirection="column"
+                app:justifyContent="center"
+                app:alignItems="baseline">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="24sp"
+                    android:textColor="@color/black"
+                    android:text="Hello,"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textFontWeight="800"
+                    android:textSize="24sp"
+                    android:textColor="@color/black"
+                    android:text="@{main.username}"/>
+            </com.google.android.flexbox.FlexboxLayout>
+
+            <com.google.android.flexbox.FlexboxLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginBottom="10dp"
+                android:visibility="@{(main.pushedPackages.size() &gt; 1 &amp;&amp; main.selectedTask == null) ? View.VISIBLE : View.GONE}"
+                app:flexDirection="row"
+                app:justifyContent="space_between"
+                app:alignItems="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textFontWeight="700"
+                    android:textSize="16sp"
+                    android:textColor="@color/black"
+                    android:text="Lesson Plan name"/>
+
+                <com.google.android.flexbox.FlexboxLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:flexDirection="row"
+                    app:alignItems="center">
+
+                    <RelativeLayout
+                        android:id="@+id/task_carousel_menu"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="15dp"
+                        android:padding="10dp"
+                        android:background="@{main.packageListType == `carousel` ? @drawable/background_task_menu_icon : null}">
+
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:contentDescription="@string/leadme_icon"
+                            android:src="@drawable/icon_task_carousel"/>
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/task_list_menu"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="14dp"
+                        android:background="@{main.packageListType == `list` ? @drawable/background_task_menu_icon : null}">
+
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:contentDescription="@string/leadme_icon"
+                            android:src="@drawable/icon_task_list"/>
+                    </RelativeLayout>
+                </com.google.android.flexbox.FlexboxLayout>
+            </com.google.android.flexbox.FlexboxLayout>
+        </com.google.android.flexbox.FlexboxLayout>
+
+        <RelativeLayout
+            android:id="@+id/task_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </com.google.android.flexbox.FlexboxLayout>
+</layout >

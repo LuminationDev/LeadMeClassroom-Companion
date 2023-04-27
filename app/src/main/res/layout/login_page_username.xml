@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="android.view.View"/>
+        <import type="com.lumination.leadmeclassroom_companion.ui.main.dashboard.DashboardViewModel" />
+        <variable
+            name="main"
+            type="com.lumination.leadmeclassroom_companion.ui.main.dashboard.DashboardViewModel" />
+
+        <import type="com.lumination.leadmeclassroom_companion.ui.login.classcode.ClassCodeViewModel" />
+        <variable
+            name="login"
+            type="com.lumination.leadmeclassroom_companion.ui.login.classcode.ClassCodeViewModel" />
+    </data>
+
+    <com.google.android.flexbox.FlexboxLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/navy"
+        app:flexDirection="column"
+        app:justifyContent="center"
+        app:alignItems="center">
+
+        <TextView
+            android:id="@+id/message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:textFontWeight="700"
+            android:textColor="@color/white"
+            android:text="@string/enter_username" />
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:layout_width="228dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            app:alignItems="center"
+            app:flexDirection="column">
+
+            <EditText
+                android:id="@+id/text_entry"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:autofillHints=""
+                android:inputType="textCapSentences"
+                android:background="@drawable/background_edit_text"
+                android:textAlignment="center"
+                tools:ignore="LabelFor" />
+
+            <TextView
+                android:id="@+id/error_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:paddingHorizontal="25dp"
+                android:text="@string/placeholder_error_text"
+                android:textSize="11sp"
+                android:textAlignment="center"
+                android:textColor="@color/red_error"
+                android:visibility="gone"/>
+        </com.google.android.flexbox.FlexboxLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/submit_username"
+            android:layout_width="228dp"
+            android:layout_height="66dp"
+            android:elevation="0dp"
+            android:letterSpacing="0"
+            android:stateListAnimator="@null"
+            android:text="@string/enter"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:backgroundTint="@{main.username.length != 0 ? @color/blue : @color/grey, default=@color/grey}"
+            android:enabled="@{main.username.length != 0}"
+            app:cornerRadius="10dp"
+            app:layout_flexShrink="0"
+            app:rippleColor="@color/grey" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/red_error"
+            android:visibility="@{login.errorCode.length > 0 ? View.VISIBLE : View.INVISIBLE}"
+            android:text="@{login.errorCode}" />
+
+    </com.google.android.flexbox.FlexboxLayout>
+</layout>
