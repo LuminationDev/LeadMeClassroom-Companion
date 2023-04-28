@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.flexbox.FlexboxLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!--Fill the void space that the menu doesn't, tapping here will close the menu-->
+        <com.google.android.flexbox.FlexboxLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/non_menu_space"
+            app:layout_flexGrow="1"/>
+
+        <com.google.android.flexbox.FlexboxLayout
+            xmlns:tools="http://schemas.android.com/tools"
+            tools:context=".ui.main.dashboard.DashboardFragment"
+            android:id="@+id/main"
+            android:layout_width="223dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/background_sidemenu"
+            android:paddingTop="67dp"
+            app:flexDirection="column"
+            app:alignItems="baseline">
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginBottom="15dp"
+                android:textAllCaps="false"
+                android:textAlignment="viewStart"
+                android:text="@string/change_name"
+                app:rippleColor="@color/grey"
+                app:icon="@drawable/icon_edit_pen"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/logout"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginHorizontal="20dp"
+                android:textAllCaps="false"
+                android:textAlignment="viewStart"
+                android:text="@string/logout"
+                app:rippleColor="@color/grey"
+                app:icon="@drawable/icon_logout"/>
+        </com.google.android.flexbox.FlexboxLayout>
+    </com.google.android.flexbox.FlexboxLayout>
+</RelativeLayout>

@@ -1,12 +1,20 @@
-package com.lumination.leadmeclassroom_companion.ui.login;
+package com.lumination.leadmeclassroom_companion.ui.login.classcode;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class LoginViewModel extends ViewModel {
+public class ClassCodeViewModel extends ViewModel {
     private MutableLiveData<String> loginCode = new MutableLiveData<>();
     private MutableLiveData<String> errorCode = new MutableLiveData<>();
+
+    /**
+     * Reset all data fields within the ViewModel.
+     */
+    public void resetData() {
+        loginCode = new MutableLiveData<>();
+        errorCode = new MutableLiveData<>();
+    }
 
     /**
      * Get the login code that was entered for an attempted connection.
@@ -27,7 +35,7 @@ public class LoginViewModel extends ViewModel {
     }
 
     /**
-     * Get the error code that was entered.
+     * Get the latest error code that has been sent from firebase or another party.
      */
     public LiveData<String> getErrorCode() {
         if (errorCode == null) {

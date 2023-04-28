@@ -18,13 +18,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.lumination.leadmeclassroom_companion.MainActivity;
 import com.lumination.leadmeclassroom_companion.R;
-import com.lumination.leadmeclassroom_companion.interfaces.StringCallbackInterface;
-import com.lumination.leadmeclassroom_companion.managers.DialogManager;
+import com.lumination.leadmeclassroom_companion.managers.PackageManager;
 import com.lumination.leadmeclassroom_companion.models.Learner;
 import com.lumination.leadmeclassroom_companion.ui.login.LoginFragment;
-import com.lumination.leadmeclassroom_companion.ui.main.MainFragment;
+import com.lumination.leadmeclassroom_companion.ui.login.classcode.ClassCodeFragment;
+import com.lumination.leadmeclassroom_companion.ui.login.username.UsernameFragment;
+import com.lumination.leadmeclassroom_companion.ui.main.dashboard.DashboardFragment;
 
 /**
  * A service class responsible for maintain listeners on firebase collections.
@@ -36,7 +36,10 @@ public class FirebaseService extends Service {
 
     private static final DatabaseReference database = getDatabase();
     private static DatabaseReference roomReference;
+    private static DatabaseReference taskReference;
+    private static DatabaseReference packageReference;
     private static String roomCode;
+    private static String uuid = "1234";
 
     // Binder given to clients
     private final IBinder binder = new LocalBinder();
@@ -111,6 +114,14 @@ public class FirebaseService extends Service {
     }
 
     /**
+     * Get the valid room code.
+     * @return A string of the entered room code.
+     */
+    public static String getRoomCode() {
+        return roomCode;
+    }
+
+    /**
      * Attempt to add a listener to a leader's collection on firebase. The functions collects the
      * room code from the loginViewModel, any errors that occur will be set in the loginViewModel
      * and displayed to the user.
@@ -118,9 +129,9 @@ public class FirebaseService extends Service {
     public static void connectToRoom()
     {
         //Check that the room code is available and not null
-        roomCode = LoginFragment.mViewModel.getLoginCode().getValue();
+        roomCode = ClassCodeFragment.mViewModel.getLoginCode().getValue();
         if(roomCode == null) {
-            LoginFragment.mViewModel.setErrorCode("Room code not entered.");
+            ClassCodeFragment.mViewModel.setErrorCode("Room code not entered.");
             return;
         }
 
@@ -139,46 +150,108 @@ public class FirebaseService extends Service {
     }
 
     /**
-     * A listener function that is attached to an active room. This checks if the room is
+     * A listener function that is attached to an active room. This checks if the room exists.
      */
     private static final ValueEventListener roomListener = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
             if (snapshot.exists()) {
-                LoginFragment.mViewModel.setErrorCode("");
+                ClassCodeFragment.mViewModel.setErrorCode("");
 
-                StringCallbackInterface setUsernameCallback = username -> {
-                    MainFragment.mViewModel.setRoomCode(roomCode);
-                    MainFragment.mViewModel.setUsername(username);
+                //If no error load the username entry
+                LoginFragment.childManager.beginTransaction()
+                        .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                        .replace(R.id.subpage, UsernameFragment.class, null)
+                        .commit();
 
-                    MainActivity.fragmentManager.beginTransaction()
-                            .replace(R.id.container, MainFragment.class, null)
-                            .commitNow();
-
-                    AddFollower(username);
-                };
-
-                DialogManager.createBasicInputDialog("Username", "Please enter your name.", setUsernameCallback);
+                LoginFragment.childManager.executePendingTransactions();
             } else {
-                LoginFragment.mViewModel.setErrorCode("Room not found. Try again");
+                ClassCodeFragment.mViewModel.setErrorCode("Room not found. Try again");
             }
         }
 
         @Override
         public void onCancelled(@NonNull DatabaseError error) {
             Log.e(TAG, "Database connection cancelled.");
-            LoginFragment.mViewModel.setErrorCode("Connection issue. Try again later");
+            ClassCodeFragment.mViewModel.setErrorCode("Connection issue. Try again later");
         }
     };
 
-    private static void AddFollower(String username) {
+    /**
+     * Add a user with their details to the firebase database.
+     * @param username A string of the new user's name.
+     */
+    public static void addFollower(String username) {
         //TODO finish this off
         //Create a UUID and check it does not exist on firebase for the student assignment.
 
         //Create an entry in firebase for the new Android user
-        Learner test = new Learner(username, "1234", MainFragment.mViewModel.getInstalledPackages().getValue());
+        Learner test = new Learner(username, uuid, DashboardFragment.mViewModel.getInstalledPackages().getValue());
         database.child("androidFollowers").child(test.uuid).setValue(test);
 
         //Add the additional firebase listeners
+        taskReference = database.child("androidFollowers").child(test.uuid).child("tasks");
+        taskReference.addValueEventListener(taskListener);
+
+        packageReference = database.child("androidFollowers").child(test.uuid).child("toLoadPackage");
+        packageReference.addValueEventListener(pushedPackageListener);
+    }
+
+    /**
+     * A listener function that is attached to the allowed task list. This forms the list of
+     * packages that a student is allowed to visit.
+     */
+    private static final ValueEventListener taskListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            if(snapshot.exists()) {
+                Log.e("Task", snapshot.getValue().toString());
+            }
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+            Log.e(TAG, "Database connection cancelled.");
+        }
+    };
+
+    /**
+     * A listener function that is attached to the package that has been selected by a leader. The
+     * package is what the device should now load.
+     */
+    private static final ValueEventListener pushedPackageListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            if(snapshot.exists()) {
+                if(snapshot.getValue() != null) {
+                    String packageName = snapshot.getValue().toString();
+
+                    Log.e("Package", packageName);
+                    PackageManager.ChangeActivePackage(packageName);
+                }
+            }
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+            Log.e(TAG, "Database connection cancelled.");
+        }
+    };
+
+    /**
+     * Clear the firebase data associated with the user that is currently logging out.
+     */
+    public static void removeFollower() {
+        database.child("androidFollowers").child(uuid).removeValue();
+
+        if(taskReference != null) {
+            taskReference.removeEventListener(taskListener);
+        }
+        if (packageReference != null) {
+            packageReference.removeEventListener(pushedPackageListener);
+        }
+        if (roomReference != null) {
+            roomReference.removeEventListener(roomListener);
+        }
     }
 }
