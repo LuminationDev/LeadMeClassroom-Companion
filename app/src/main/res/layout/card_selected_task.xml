@@ -33,6 +33,7 @@
             app:alignItems="center">
 
             <ImageView
+                android:id="@+id/application_icon"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:contentDescription="@string/leadme_icon"

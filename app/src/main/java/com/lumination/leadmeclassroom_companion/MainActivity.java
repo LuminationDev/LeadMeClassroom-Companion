@@ -1,10 +1,13 @@
 package com.lumination.leadmeclassroom_companion;
 
+import android.app.AppOpsManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
@@ -53,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         startFirebaseService();
-        startLeadMeService();
         preloadViewModels();
 
         if (savedInstanceState == null) {
@@ -63,7 +65,25 @@ public class MainActivity extends AppCompatActivity {
         //Load up the installed packages
         collectInstalledPackages();
 
+        checkForUsageStatPermission();
+
         instance = this;
+    }
+
+    /**
+     * Check if the PACKAGE_USAGE_STATS permission has been granted for this application. Prompt the
+     * user to accept them if not.
+     */
+    private void checkForUsageStatPermission() {
+        Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+
+        AppOpsManager appOpsManager = (AppOpsManager) getSystemService(Context.APP_OPS_SERVICE);
+        int mode = appOpsManager.unsafeCheckOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, android.os.Process.myUid(), getPackageName());
+        boolean granted = mode == AppOpsManager.MODE_ALLOWED;
+
+        if (!granted) {
+            startActivity(intent);
+        }
     }
 
     /**
@@ -100,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Start the LeadMe service.
      */
-    private void startLeadMeService() {
+    public void startLeadMeService() {
         Intent leadMe_intent = new Intent(getApplicationContext(), LeadMeService.class);
         leadMe_intent.setAction(Constants.ACTION_FOREGROUND);
         startService(leadMe_intent);
