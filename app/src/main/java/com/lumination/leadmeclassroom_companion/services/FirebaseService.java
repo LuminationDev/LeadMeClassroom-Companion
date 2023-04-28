@@ -18,6 +18,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.lumination.leadmeclassroom_companion.MainActivity;
 import com.lumination.leadmeclassroom_companion.R;
 import com.lumination.leadmeclassroom_companion.managers.PackageManager;
 import com.lumination.leadmeclassroom_companion.models.Learner;
@@ -99,6 +100,7 @@ public class FirebaseService extends Service {
     }
 
     public void endForeground() {
+        removeFollower();
         disconnectFromLeader();
         stopForeground(true);
         stopSelf();
@@ -182,18 +184,20 @@ public class FirebaseService extends Service {
      * @param username A string of the new user's name.
      */
     public static void addFollower(String username) {
+        MainActivity.getInstance().startLeadMeService();
+
         //TODO finish this off
         //Create a UUID and check it does not exist on firebase for the student assignment.
 
         //Create an entry in firebase for the new Android user
         Learner test = new Learner(username, uuid, DashboardFragment.mViewModel.getInstalledPackages().getValue());
-        database.child("androidFollowers").child(test.uuid).setValue(test);
+        database.child("androidFollowers").child(uuid).setValue(test);
 
         //Add the additional firebase listeners
-        taskReference = database.child("androidFollowers").child(test.uuid).child("tasks");
+        taskReference = database.child("androidFollowers").child(uuid).child("tasks");
         taskReference.addValueEventListener(taskListener);
 
-        packageReference = database.child("androidFollowers").child(test.uuid).child("toLoadPackage");
+        packageReference = database.child("androidFollowers").child(uuid).child("toLoadPackage");
         packageReference.addValueEventListener(pushedPackageListener);
     }
 
@@ -253,5 +257,13 @@ public class FirebaseService extends Service {
         if (roomReference != null) {
             roomReference.removeEventListener(roomListener);
         }
+    }
+
+    /**
+     * Update the android follow entry with what the current package is on the local device.
+     * @param packageName A String of the currently active package.
+     */
+    public static void updateCurrentPackage(String packageName) {
+        database.child("androidFollowers").child(uuid).child("currentPackage").setValue(packageName);
     }
 }

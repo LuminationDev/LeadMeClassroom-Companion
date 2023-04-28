@@ -1,12 +1,16 @@
 package com.lumination.leadmeclassroom_companion.ui.main.tasks.adapters;
 
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.lumination.leadmeclassroom_companion.MainActivity;
 import com.lumination.leadmeclassroom_companion.R;
 import com.lumination.leadmeclassroom_companion.databinding.CardListTaskBinding;
 import com.lumination.leadmeclassroom_companion.models.Task;
@@ -60,6 +64,18 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
             binding.setTask(task);
 
             View finalResult = binding.getRoot();
+
+            try
+            {
+                Drawable icon = MainActivity.getInstance().getApplicationContext().getPackageManager().getApplicationIcon(task.packageName);
+                ImageView imageView = finalResult.findViewById(R.id.application_icon);
+                imageView.setImageDrawable(icon);
+            }
+            catch (PackageManager.NameNotFoundException e)
+            {
+                e.printStackTrace();
+            }
+
             finalResult.setOnClickListener(v -> {
                 DashboardFragment.mViewModel.setSelectedTask(task);
                 DashboardFragment.childManager.beginTransaction()

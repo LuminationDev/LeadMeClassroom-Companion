@@ -54,9 +54,9 @@ public class DashboardFragment extends Fragment {
 
         //TODO used for testing
         List<Task> test = new ArrayList<>();
-        Task task = new Task("App Name1", "Media type1", "packageName1", null);
-        Task task2 = new Task("App Name2", "Media type2", "packageName2", null);
-        Task task3 = new Task("App Name3", "Media type3", "packageName3", null);
+        Task task = new Task("Settings", "Media type1", "com.android.settings", null);
+        Task task2 = new Task("Gallery", "Media type2", "com.miui.gallery", null);
+        Task task3 = new Task("Compass", "Media type3", "com.miui.compass", null);
         test.add(task);
         test.add(task2);
         test.add(task3);

@@ -7,6 +7,8 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.app.usage.UsageStats;
+import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
@@ -15,9 +17,16 @@ import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
+import com.lumination.leadmeclassroom_companion.MainActivity;
 import com.lumination.leadmeclassroom_companion.R;
 import com.lumination.leadmeclassroom_companion.managers.PackageManager;
 import com.lumination.leadmeclassroom_companion.utilities.Constants;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A service class responsible for maintain listeners on firebase collections.
@@ -28,6 +37,11 @@ public class LeadMeService extends Service {
     private static final String CHANNEL_NAME = "LeadMe";
 
     private Intent lastIntent;
+    private String currentPackage;
+
+    private UsageStatsManager usageStatsManager;
+    private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(10);
+    private final int interval = 2;
 
     // Binder given to clients
     private final IBinder binder = new LocalBinder();
@@ -91,6 +105,10 @@ public class LeadMeService extends Service {
     }
 
     private void CreateNotificationChannel() {
+        usageStatsManager = (UsageStatsManager) MainActivity.getInstance().getSystemService(Context.USAGE_STATS_SERVICE);
+
+        executorService.scheduleAtFixedRate((Runnable) this::CheckAppActivity, 0, interval, TimeUnit.SECONDS);
+
         NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
                 CHANNEL_NAME,
                 NotificationManager.IMPORTANCE_NONE);
@@ -133,5 +151,31 @@ public class LeadMeService extends Service {
     public void endForeground() {
         stopForeground(true);
         stopSelf();
+    }
+
+    /**
+     * Run through the open applications and check what is current active. If this is different from
+     * the previously recorded one, update the entry on firebase.
+     */
+    private void CheckAppActivity() {
+        List<UsageStats> usageStatsList = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_BEST, 0, System.currentTimeMillis());
+
+        UsageStats lastUsedApp = null;
+        for (UsageStats usageStats : usageStatsList) {
+            if (lastUsedApp == null || usageStats.getLastTimeUsed() > lastUsedApp.getLastTimeUsed()) {
+                lastUsedApp = usageStats;
+            }
+        }
+
+        // The packageName variable now contains the package name of the currently active application
+        if (lastUsedApp != null) {
+            String packageName = lastUsedApp.getPackageName();
+
+            //Check if the package has changed since the last check
+            if(!Objects.equals(packageName, currentPackage)) {
+                currentPackage = packageName;
+                FirebaseService.updateCurrentPackage(packageName);
+            }
+        }
     }
 }
