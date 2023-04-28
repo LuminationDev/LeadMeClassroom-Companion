@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "12541426407",
+    "firebase_url": "https://browserextension-bc94e-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "browserextension-bc94e",
+    "storage_bucket": "browserextension-bc94e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:12541426407:android:ee415c7d3bc70932108042",
+        "android_client_info": {
+          "package_name": "com.lumination.leadmeclassroom_companion"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "12541426407-bs8r5c3fqcbqlce7jbt4kt9cnquq64d8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzlXpgbyAxVEpUqDKuVxYUuodHyAsbYyM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "12541426407-bs8r5c3fqcbqlce7jbt4kt9cnquq64d8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
