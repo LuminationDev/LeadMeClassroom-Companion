@@ -1,5 +1,6 @@
 package com.lumination.leadmeclassroom_companion.managers;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.util.Log;
 
@@ -27,12 +28,19 @@ public class PackageManager {
      * @param packageName A string representing the package name of the application to launch.
      */
     public static void ChangeActivePackage(String packageName) {
-        Intent launchIntent = MainActivity.getInstance().getPackageManager()
-                .getLaunchIntentForPackage(packageName);
+        try {
+            Intent launchIntent = MainActivity.getInstance().getPackageManager()
+                    .getLaunchIntentForPackage(packageName);
 
-        if (launchIntent != null) {
-            launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            MainActivity.getInstance().startActivity(launchIntent);
+            if (launchIntent != null) {
+                launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY);
+                MainActivity.getInstance().startActivity(launchIntent);
+            }
+        } catch (ActivityNotFoundException e) {
+            // Define what your app should do if no activity can handle the intent.
+            Log.e(TAG, "Application not found: " + e);
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
         }
     }
 }

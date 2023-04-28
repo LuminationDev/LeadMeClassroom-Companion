@@ -18,6 +18,7 @@
         tools:targetApi="33">
         <activity
             android:name=".MainActivity"
+            android:launchMode="singleTask"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,13 +34,13 @@
         <service
             android:enabled="true"
             android:name=".services.FirebaseService"
-            android:foregroundServiceType="connectedDevice"
+            android:foregroundServiceType="dataSync"
             android:stopWithTask="true"/>
 
         <service
             android:enabled="true"
             android:name=".services.LeadMeService"
-            android:foregroundServiceType="connectedDevice"
+            android:foregroundServiceType="dataSync"
             android:stopWithTask="true"/>
     </application>
 
