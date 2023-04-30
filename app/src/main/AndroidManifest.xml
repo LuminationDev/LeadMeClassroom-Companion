@@ -18,6 +18,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LeadMeClassroomCompanion"
         tools:targetApi="33">
+
+        <meta-data android:name="android.permission.PACKAGE_USAGE_STATS"
+            android:value="Our app is a learning management app that allows students to connect to a
+            teachers classroom. This permission allows us to indicate to a teacher when a student may
+            be off task, and to return them to their assigned task." />
+
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTask"

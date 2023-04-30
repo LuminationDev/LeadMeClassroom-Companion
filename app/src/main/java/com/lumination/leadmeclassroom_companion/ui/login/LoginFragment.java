@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.lumination.leadmeclassroom_companion.R;
 import com.lumination.leadmeclassroom_companion.ui.login.classcode.ClassCodeFragment;
+import com.lumination.leadmeclassroom_companion.ui.login.username.UsernameFragment;
 
 public class LoginFragment extends Fragment {
     public static FragmentManager childManager;
@@ -31,16 +32,22 @@ public class LoginFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         if (savedInstanceState == null) {
-            loadClassCodeEntry();
+            //Determine if logging in or changing name
+            Bundle bundle = getArguments();
+            loadEntryFragment(bundle);
         }
     }
 
     /**
      * Load the initial entry point which is the class code entry screen.
      */
-    private void loadClassCodeEntry() {
+    private void loadEntryFragment(Bundle bundle) {
+        String type = bundle != null ? bundle.getString("type") : null;
+
         childManager.beginTransaction()
-                .replace(R.id.subpage, ClassCodeFragment.class, null)
+                .replace(R.id.subpage,
+                        type != null ? UsernameFragment.class : ClassCodeFragment.class,
+                        type != null ? bundle : null)
                 .commit();
 
         childManager.executePendingTransactions();

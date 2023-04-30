@@ -63,7 +63,6 @@ public class TaskSingleFragment extends Fragment {
             DashboardFragment.mViewModel.setSelectedTask(null);
         });
 
-        //TODO add listener for launcher button?
         MaterialButton launcher = view.findViewById(R.id.launch_button);
         launcher.setOnClickListener(v -> {
             try {

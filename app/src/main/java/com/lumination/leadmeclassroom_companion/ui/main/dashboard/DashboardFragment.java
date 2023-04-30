@@ -22,8 +22,11 @@ import com.lumination.leadmeclassroom_companion.ui.main.tasks.TaskSelectionFragm
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class DashboardFragment extends Fragment {
+    public final static String TAG = "DASHBOARD_FRAGMENT";
+
     public static FragmentManager childManager;
 
     private MainPageDashboardBinding binding;
@@ -53,15 +56,17 @@ public class DashboardFragment extends Fragment {
 
 
         //TODO used for testing
-        List<Task> test = new ArrayList<>();
-        Task task = new Task("Settings", "Media type1", "com.android.settings", null);
-        Task task2 = new Task("Gallery", "Media type2", "com.miui.gallery", null);
-        Task task3 = new Task("Compass", "Media type3", "com.miui.compass", null);
-        test.add(task);
-        test.add(task2);
-        test.add(task3);
+        if(Objects.requireNonNull(mViewModel.getPushedPackages().getValue()).size() == 0) {
+            List<Task> test = new ArrayList<>();
+            Task task = new Task("Settings", "Media type1", "com.android.settings", null);
+            Task task2 = new Task("Gallery", "Media type2", "com.miui.gallery", null);
+            Task task3 = new Task("Compass", "Media type3", "com.miui.compass", null);
+            test.add(task);
+            test.add(task2);
+            test.add(task3);
 
-        MainActivity.runOnUIDelay(() -> mViewModel.setPushedPackages(test), 4000);
+            MainActivity.runOnUIDelay(() -> mViewModel.setPushedPackages(test), 4000);
+        }
     }
 
     @Nullable
