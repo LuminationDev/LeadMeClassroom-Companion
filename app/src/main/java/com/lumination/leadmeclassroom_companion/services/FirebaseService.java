@@ -40,7 +40,6 @@ public class FirebaseService extends Service {
     private static DatabaseReference taskReference;
     private static DatabaseReference packageReference;
     private static String roomCode;
-    private static String uuid = "1234";
 
     // Binder given to clients
     private final IBinder binder = new LocalBinder();
@@ -179,6 +178,9 @@ public class FirebaseService extends Service {
         }
     };
 
+    //TODO only used for initial testing
+    private static String uuid = "1234";
+
     /**
      * Add a user with their details to the firebase database.
      * @param username A string of the new user's name.
@@ -260,10 +262,18 @@ public class FirebaseService extends Service {
     }
 
     /**
-     * Update the android follow entry with what the current package is on the local device.
+     * Update the android follower entry with what the current package is on the local device.
      * @param packageName A String of the currently active package.
      */
     public static void updateCurrentPackage(String packageName) {
         database.child("androidFollowers").child(uuid).child("currentPackage").setValue(packageName);
+    }
+
+    /**
+     * Update the android follower entry with the new name a learner has entered.
+     * @param newName A String of the new name to be submitted.
+     */
+    public static void changeUsername(String newName) {
+        database.child("androidFollowers").child(uuid).child("username").setValue(newName);
     }
 }

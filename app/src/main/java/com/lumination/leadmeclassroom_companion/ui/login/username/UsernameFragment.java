@@ -23,7 +23,7 @@ import com.lumination.leadmeclassroom_companion.ui.main.MainFragment;
 import com.lumination.leadmeclassroom_companion.ui.main.dashboard.DashboardFragment;
 
 public class UsernameFragment extends Fragment {
-    private static final String TAG = "LoginFragment";
+    public final static String TAG = "USERNAME_FRAGMENT";
 
     public FragmentManager childManager;
     private LoginPageUsernameBinding binding;
@@ -59,10 +59,16 @@ public class UsernameFragment extends Fragment {
             }
         });
 
+        //Determine if logging in or changing name
+        Bundle bundle = getArguments();
         view.findViewById(R.id.submit_username).setOnClickListener(v -> {
             try {
-                //Slight delay to show full button animation
-                MainActivity.runOnUIDelay(this::AddUserToFirebase, 200);
+                if(bundle == null) {
+                    MainActivity.runOnUIDelay(this::AddUserToFirebase, 200);
+                } else {
+                    //Slight delay to show full button animation
+                    MainActivity.runOnUIDelay(this::ChangeUsername, 200);
+                }
             } catch (NullPointerException ex) {
                 Log.e(TAG, ex.toString());
             }
@@ -72,17 +78,28 @@ public class UsernameFragment extends Fragment {
     }
 
     /**
+     * Change the username of the currently logged in learner.
+     */
+    private void ChangeUsername() {
+        FirebaseService.changeUsername(DashboardFragment.mViewModel.getUsername().getValue());
+
+        MainActivity.fragmentManager.beginTransaction()
+                .replace(R.id.container, MainFragment.class, null, DashboardFragment.TAG)
+                .commitNow();
+    }
+
+    /**
      * After validating the username, add now validated room code to the mainViewModel
      * to be used for the rest of the application's life cycle.
      */
     private void AddUserToFirebase() {
-        //TODO valid user against name list?
+        //TODO validate user against name list?
 
         FirebaseService.addFollower(DashboardFragment.mViewModel.getUsername().getValue());
 
         DashboardFragment.mViewModel.setRoomCode(FirebaseService.getRoomCode());
         MainActivity.fragmentManager.beginTransaction()
-                .replace(R.id.container, MainFragment.class, null)
+                .replace(R.id.container, MainFragment.class, null, DashboardFragment.TAG)
                 .commitNow();
     }
 }
