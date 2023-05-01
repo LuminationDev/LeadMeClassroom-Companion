@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         startFirebaseService();
+        startOverlayService();
         preloadViewModels();
 
         if (savedInstanceState == null) {

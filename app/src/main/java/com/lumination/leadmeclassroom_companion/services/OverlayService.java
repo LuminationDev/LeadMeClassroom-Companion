@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -32,11 +33,14 @@ public class OverlayService extends Service {
 
         // Set layout parameters for the overlay view
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.MATCH_PARENT,
+                1,
+                1,
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT);
+
+        // Set the gravity to BOTTOM
+        layoutParams.gravity = Gravity.BOTTOM | Gravity.START;
 
         // Add the overlay view to the WindowManager
         mWindowManager.addView(mOverlayView, layoutParams);

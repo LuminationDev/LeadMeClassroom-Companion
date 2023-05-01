@@ -235,6 +235,7 @@ public class FirebaseService extends Service {
                     Log.e("Package", packageName);
                     if(packageName.equals(MainActivity.getInstance().getPackageName())) {
                         PackageManager.ReturnHome();
+                        MainActivity.getInstance().startOverlayService();
                     } else {
                         PackageManager.ChangeActivePackage(packageName);
                     }

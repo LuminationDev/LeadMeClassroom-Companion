@@ -54,7 +54,6 @@ public class DashboardFragment extends Fragment {
             setupTasks();
         });
 
-
         //TODO used for testing
         if(Objects.requireNonNull(mViewModel.getPushedPackages().getValue()).size() == 0) {
             List<Task> test = new ArrayList<>();
