@@ -1,7 +1,5 @@
 package com.lumination.leadmeclassroom_companion.ui.main.tasks.adapters;
 
-import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,12 +8,12 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.lumination.leadmeclassroom_companion.MainActivity;
 import com.lumination.leadmeclassroom_companion.R;
 import com.lumination.leadmeclassroom_companion.databinding.CardListTaskBinding;
 import com.lumination.leadmeclassroom_companion.models.Task;
 import com.lumination.leadmeclassroom_companion.ui.main.dashboard.DashboardFragment;
 import com.lumination.leadmeclassroom_companion.ui.main.tasks.TaskSingleFragment;
+import com.lumination.leadmeclassroom_companion.utilities.TaskHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,16 +63,8 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
 
             View finalResult = binding.getRoot();
 
-            try
-            {
-                Drawable icon = MainActivity.getInstance().getApplicationContext().getPackageManager().getApplicationIcon(task.packageName);
-                ImageView imageView = finalResult.findViewById(R.id.application_icon);
-                imageView.setImageDrawable(icon);
-            }
-            catch (PackageManager.NameNotFoundException e)
-            {
-                e.printStackTrace();
-            }
+            ImageView imageView = finalResult.findViewById(R.id.application_icon);
+            TaskHelpers.setApplicationIconOrDefault(imageView, task.packageName);
 
             finalResult.setOnClickListener(v -> {
                 DashboardFragment.mViewModel.setSelectedTask(task);
