@@ -5,6 +5,9 @@
     <uses-permission android:name="android.permission.REQUEST_ROLE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.REORDER_TASKS" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <!--Permissions that require approval explanations-->
     <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
@@ -58,6 +61,12 @@
             android:enabled="true"
             android:name=".services.LeadMeService"
             android:foregroundServiceType="dataSync"
+            android:stopWithTask="true"/>
+
+        <service
+            android:enabled="true"
+            android:name=".services.OverlayService"
+            android:foregroundServiceType="mediaProjection"
             android:stopWithTask="true"/>
     </application>
 
