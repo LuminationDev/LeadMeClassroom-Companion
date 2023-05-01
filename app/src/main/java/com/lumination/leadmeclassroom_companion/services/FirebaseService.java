@@ -233,7 +233,11 @@ public class FirebaseService extends Service {
                     String packageName = snapshot.getValue().toString();
 
                     Log.e("Package", packageName);
-                    PackageManager.ChangeActivePackage(packageName);
+                    if(packageName.equals(MainActivity.getInstance().getPackageName())) {
+                        PackageManager.ReturnHome();
+                    } else {
+                        PackageManager.ChangeActivePackage(packageName);
+                    }
                 }
             }
         }

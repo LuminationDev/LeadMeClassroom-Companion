@@ -1,14 +1,19 @@
 package com.lumination.leadmeclassroom_companion.ui.main.tasks.adapters;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.lumination.leadmeclassroom_companion.R;
 import com.lumination.leadmeclassroom_companion.databinding.CardCarouselTaskBinding;
+import com.lumination.leadmeclassroom_companion.managers.PackageManager;
 import com.lumination.leadmeclassroom_companion.models.Task;
 import com.lumination.leadmeclassroom_companion.ui.main.dashboard.DashboardFragment;
+import com.lumination.leadmeclassroom_companion.utilities.TaskHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +60,16 @@ public class TaskCarouselAdapter extends RecyclerView.Adapter<TaskCarouselAdapte
 
         public void bind(Task task, TaskCarouselAdapter listAdapter) {
             binding.setTask(task);
+
+            View finalResult = binding.getRoot();
+
+            ImageView imageView = finalResult.findViewById(R.id.application_icon);
+            TaskHelpers.setApplicationIconOrDefault(imageView, task.packageName);
+
+            finalResult.findViewById(R.id.launch_button).setOnClickListener(v -> {
+                PackageManager.ChangeActivePackage(task.packageName);
+            });
+
             taskBindings.add(binding);
         }
     }

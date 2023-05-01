@@ -1,11 +1,6 @@
 package com.lumination.leadmeclassroom_companion.ui.main.tasks;
 
-import android.content.ActivityNotFoundException;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +12,12 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.material.button.MaterialButton;
-import com.lumination.leadmeclassroom_companion.MainActivity;
 import com.lumination.leadmeclassroom_companion.R;
 import com.lumination.leadmeclassroom_companion.databinding.CardSelectedTaskBinding;
+import com.lumination.leadmeclassroom_companion.managers.PackageManager;
 import com.lumination.leadmeclassroom_companion.models.Task;
 import com.lumination.leadmeclassroom_companion.ui.main.dashboard.DashboardFragment;
+import com.lumination.leadmeclassroom_companion.utilities.TaskHelpers;
 
 public class TaskSingleFragment extends Fragment {
     public final static String TAG = "SINGLE_TASK_CARD";
@@ -44,18 +39,13 @@ public class TaskSingleFragment extends Fragment {
         if(task == null) return view;
 
         CardSelectedTaskBinding binding = DataBindingUtil.bind(view);
+        if(binding == null) return view;
         binding.setTask(task);
 
-        try
-        {
-            Drawable icon = MainActivity.getInstance().getApplicationContext().getPackageManager().getApplicationIcon(task.packageName);
-            ImageView imageView = view.findViewById(R.id.application_icon);
-            imageView.setImageDrawable(icon);
-        }
-        catch (PackageManager.NameNotFoundException e)
-        {
-            e.printStackTrace();
-        }
+        View finalResult = binding.getRoot();
+
+        ImageView imageView = finalResult.findViewById(R.id.application_icon);
+        TaskHelpers.setApplicationIconOrDefault(imageView, task.packageName);
 
         TextView back = view.findViewById(R.id.back_to_list);
         back.setOnClickListener(v -> {
@@ -63,22 +53,8 @@ public class TaskSingleFragment extends Fragment {
             DashboardFragment.mViewModel.setSelectedTask(null);
         });
 
-        MaterialButton launcher = view.findViewById(R.id.launch_button);
-        launcher.setOnClickListener(v -> {
-            try {
-                Intent launchIntent = MainActivity.getInstance().getPackageManager()
-                        .getLaunchIntentForPackage(task.packageName);
-
-                if (launchIntent != null) {
-                    launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY);
-                    MainActivity.getInstance().startActivity(launchIntent);
-                }
-            } catch (ActivityNotFoundException e) {
-                // Define what your app should do if no activity can handle the intent.
-                Log.e(TAG, "Application not found: " + e);
-            } catch (Exception e) {
-                Log.e(TAG, e.toString());
-            }
+        finalResult.findViewById(R.id.launch_button).setOnClickListener(v -> {
+            PackageManager.ChangeActivePackage(task.packageName);
         });
 
         return view;
