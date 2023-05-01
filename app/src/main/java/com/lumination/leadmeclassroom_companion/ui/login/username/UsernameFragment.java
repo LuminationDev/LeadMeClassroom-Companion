@@ -82,7 +82,10 @@ public class UsernameFragment extends Fragment {
      */
     private void ChangeUsername() {
         FirebaseService.changeUsername(DashboardFragment.mViewModel.getUsername().getValue());
-        MainActivity.fragmentManager.popBackStack();
+
+        MainActivity.fragmentManager.beginTransaction()
+                .replace(R.id.container, MainFragment.class, null, DashboardFragment.TAG)
+                .commitNow();
     }
 
     /**
