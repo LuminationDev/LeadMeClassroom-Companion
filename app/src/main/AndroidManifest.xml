@@ -39,6 +39,8 @@
             android:launchMode="singleTop"
             android:exported="true"
             android:screenOrientation="portrait"
+            android:alwaysRetainTaskState="true"
+            android:allowTaskReparenting="true"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

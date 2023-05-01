@@ -17,12 +17,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <Button
-                android:id="@+id/return_button"
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/blue"
-                android:text="RETURN"/>
+                android:textColor="@color/red_error"
+                android:text="STOP YOU'VE BEEN OVERLAID!"/>
         </com.google.android.flexbox.FlexboxLayout>
 
     </com.google.android.flexbox.FlexboxLayout>
