@@ -4,6 +4,7 @@ import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -15,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.lumination.leadmeclassroom_companion.services.FirebaseService;
 import com.lumination.leadmeclassroom_companion.services.LeadMeService;
+import com.lumination.leadmeclassroom_companion.services.OverlayService;
 import com.lumination.leadmeclassroom_companion.ui.login.LoginFragment;
 import com.lumination.leadmeclassroom_companion.ui.login.classcode.ClassCodeFragment;
 import com.lumination.leadmeclassroom_companion.ui.login.classcode.ClassCodeViewModel;
@@ -56,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         startFirebaseService();
+        startOverlayService();
         preloadViewModels();
 
         if (savedInstanceState == null) {
@@ -66,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
         collectInstalledPackages();
 
         checkForUsageStatPermission();
+        checkForOverlayPermission();
 
         instance = this;
     }
@@ -81,9 +85,27 @@ public class MainActivity extends AppCompatActivity {
         int mode = appOpsManager.unsafeCheckOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, android.os.Process.myUid(), getPackageName());
         boolean granted = mode == AppOpsManager.MODE_ALLOWED;
 
-        if (!granted) {
-            startActivity(intent);
+        if (granted) {
+            checkForOverlayPermission();
+            return;
         }
+
+        startActivity(intent);
+    }
+
+    /**
+     * Check if the ACTION_MANAGE_OVERLAY_PERMISSION permission has been granted for this application.
+     * Prompt the user to accept them if not.
+     */
+    private void checkForOverlayPermission() {
+        if (Settings.canDrawOverlays(this)) {
+            return;
+        }
+
+        // The user has not granted permission yet, so ask for it
+        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+        intent.setData(Uri.parse("package:" + getPackageName()));
+        startActivity(intent);
     }
 
     /**
@@ -127,11 +149,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Start the firebase service.
+     * Start the Firebase service.
      */
     private void startFirebaseService() {
         Intent network_intent = new Intent(getApplicationContext(), FirebaseService.class);
         startForegroundService(network_intent);
+    }
+
+    /**
+     * Start the Overlay service
+     */
+    public void startOverlayService() {
+        Intent overlayIntent = new Intent(getApplicationContext(), OverlayService.class);
+        startService(overlayIntent);
     }
 
     /**

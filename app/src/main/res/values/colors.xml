@@ -23,4 +23,6 @@
     <color name="background_main">#F7F7FC</color>
 
     <color name="red_error">#FF3104</color>
+
+    <color name="transparent">#00000000</color>
 </resources>

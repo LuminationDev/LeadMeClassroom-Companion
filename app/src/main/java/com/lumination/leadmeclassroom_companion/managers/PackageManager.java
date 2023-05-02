@@ -17,7 +17,6 @@ public class PackageManager {
      */
     public static void ReturnHome() {
         Log.e(TAG, "Returning home");
-
         Intent intent = new Intent(MainActivity.getInstance(), MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY);
         MainActivity.getInstance().startActivity(intent);
