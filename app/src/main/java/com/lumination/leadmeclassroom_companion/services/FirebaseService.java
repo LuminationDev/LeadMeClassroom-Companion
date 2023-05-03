@@ -11,8 +11,10 @@ import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -22,10 +24,13 @@ import com.lumination.leadmeclassroom_companion.MainActivity;
 import com.lumination.leadmeclassroom_companion.R;
 import com.lumination.leadmeclassroom_companion.managers.PackageManager;
 import com.lumination.leadmeclassroom_companion.models.Learner;
+import com.lumination.leadmeclassroom_companion.models.Request;
 import com.lumination.leadmeclassroom_companion.ui.login.LoginFragment;
 import com.lumination.leadmeclassroom_companion.ui.login.classcode.ClassCodeFragment;
 import com.lumination.leadmeclassroom_companion.ui.login.username.UsernameFragment;
 import com.lumination.leadmeclassroom_companion.ui.main.dashboard.DashboardFragment;
+
+import java.util.UUID;
 
 /**
  * A service class responsible for maintain listeners on firebase collections.
@@ -38,7 +43,14 @@ public class FirebaseService extends Service {
     private static final DatabaseReference database = getDatabase();
     private static DatabaseReference roomReference;
     private static DatabaseReference taskReference;
-    private static DatabaseReference packageReference;
+    private static DatabaseReference allPackageReference;
+    private static DatabaseReference individualPackageReference;
+
+    private static final String followerRef = "mobileFollowers";
+    private static final String messageRef = "mobileMessages";
+
+    // Values for connecting to a class
+    private static final String uuid = UUID.randomUUID().toString();
     private static String roomCode;
 
     // Binder given to clients
@@ -178,9 +190,6 @@ public class FirebaseService extends Service {
         }
     };
 
-    //TODO only used for initial testing
-    private static String uuid = "1234";
-
     /**
      * Add a user with their details to the firebase database.
      * @param username A string of the new user's name.
@@ -188,19 +197,20 @@ public class FirebaseService extends Service {
     public static void addFollower(String username) {
         MainActivity.getInstance().startLeadMeService();
 
-        //TODO finish this off
-        //Create a UUID and check it does not exist on firebase for the student assignment.
-
         //Create an entry in firebase for the new Android user
-        Learner test = new Learner(username, uuid, DashboardFragment.mViewModel.getInstalledPackages().getValue());
-        database.child("androidFollowers").child(uuid).setValue(test);
+        Learner test = new Learner(username, roomCode, DashboardFragment.mViewModel.getInstalledPackages().getValue());
+        database.child(followerRef).child(roomCode).child(uuid).setValue(test);
 
         //Add the additional firebase listeners
-        taskReference = database.child("androidFollowers").child(uuid).child("tasks");
+        taskReference = database.child(followerRef).child(roomCode).child(uuid).child("tasks");
         taskReference.addValueEventListener(taskListener);
 
-        packageReference = database.child("androidFollowers").child(uuid).child("toLoadPackage");
-        packageReference.addValueEventListener(pushedPackageListener);
+        //Listen for both individual actions and group wide actions
+        allPackageReference = database.child("classCode").child(roomCode).child("request").child(messageRef);
+        individualPackageReference = database.child(followerRef).child(roomCode).child(uuid).child("request");
+
+        allPackageReference.addChildEventListener(requestListener);
+        individualPackageReference.addChildEventListener(requestListener);
     }
 
     /**
@@ -222,25 +232,53 @@ public class FirebaseService extends Service {
     };
 
     /**
-     * A listener function that is attached to the package that has been selected by a leader. The
-     * package is what the device should now load.
+     * A listener function that is attached to the latest request that has been made by a leader. The
+     * action is what the device should now do.
      */
-    private static final ValueEventListener pushedPackageListener = new ValueEventListener() {
+    private static final ChildEventListener requestListener = new ChildEventListener() {
         @Override
-        public void onDataChange(@NonNull DataSnapshot snapshot) {
+        public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
             if(snapshot.exists()) {
                 if(snapshot.getValue() != null) {
-                    String packageName = snapshot.getValue().toString();
+                    Request request = snapshot.getValue(Request.class);
 
-                    Log.e("Package", packageName);
-                    if(packageName.equals(MainActivity.getInstance().getPackageName())) {
-                        PackageManager.ReturnHome();
-                        MainActivity.getInstance().startOverlayService();
-                    } else {
-                        PackageManager.ChangeActivePackage(packageName);
+                    if(request == null) return;
+
+                    switch(request.getType()) {
+                        case "force_active_app":
+                            if(request.getAction().equals(MainActivity.getInstance().getPackageName())) {
+                                PackageManager.ReturnHome();
+                            } else {
+                                PackageManager.ChangeActivePackage(request.getAction());
+                            }
+                            break;
+
+                        case "end_session":
+                        case "removedByLeader":
+                            MainActivity.getInstance().logout();
+                            break;
+
+                        default:
+                            Log.e(TAG, "Unknown request type: " + request.getType());
+                            break;
                     }
                 }
             }
+        }
+
+        @Override
+        public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+        }
+
+        @Override
+        public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+        }
+
+        @Override
+        public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
         }
 
         @Override
@@ -253,13 +291,16 @@ public class FirebaseService extends Service {
      * Clear the firebase data associated with the user that is currently logging out.
      */
     public static void removeFollower() {
-        database.child("androidFollowers").child(uuid).removeValue();
+        database.child(followerRef).child(roomCode).child(uuid).removeValue();
 
         if(taskReference != null) {
             taskReference.removeEventListener(taskListener);
         }
-        if (packageReference != null) {
-            packageReference.removeEventListener(pushedPackageListener);
+        if (allPackageReference != null) {
+            allPackageReference.removeEventListener(requestListener);
+        }
+        if (individualPackageReference != null) {
+            individualPackageReference.removeEventListener(requestListener);
         }
         if (roomReference != null) {
             roomReference.removeEventListener(roomListener);
@@ -271,7 +312,7 @@ public class FirebaseService extends Service {
      * @param packageName A String of the currently active package.
      */
     public static void updateCurrentPackage(String packageName) {
-        database.child("androidFollowers").child(uuid).child("currentPackage").setValue(packageName);
+        database.child(followerRef).child(roomCode).child(uuid).child("currentPackage").setValue(packageName);
     }
 
     /**
@@ -279,6 +320,6 @@ public class FirebaseService extends Service {
      * @param newName A String of the new name to be submitted.
      */
     public static void changeUsername(String newName) {
-        database.child("androidFollowers").child(uuid).child("username").setValue(newName);
+        database.child(followerRef).child(roomCode).child(uuid).child("name").setValue(newName);
     }
 }

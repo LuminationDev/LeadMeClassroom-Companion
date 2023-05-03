@@ -55,17 +55,17 @@ public class DashboardFragment extends Fragment {
         });
 
         //TODO used for testing
-        if(Objects.requireNonNull(mViewModel.getPushedPackages().getValue()).size() == 0) {
-            List<Task> test = new ArrayList<>();
-            Task task = new Task("Settings", "Media type1", "com.android.settings", null);
-            Task task2 = new Task("Gallery", "Media type2", "com.miui.gallery", null);
-            Task task3 = new Task("Compass", "Media type3", "com.miui.compass", null);
-            test.add(task);
-            test.add(task2);
-            test.add(task3);
-
-            MainActivity.runOnUIDelay(() -> mViewModel.setPushedPackages(test), 4000);
-        }
+//        if(Objects.requireNonNull(mViewModel.getPushedPackages().getValue()).size() == 0) {
+//            List<Task> test = new ArrayList<>();
+//            Task task = new Task("Settings", "Media type1", "com.android.settings", null);
+//            Task task2 = new Task("Gallery", "Media type2", "com.miui.gallery", null);
+//            Task task3 = new Task("Compass", "Media type3", "com.miui.compass", null);
+//            test.add(task);
+//            test.add(task2);
+//            test.add(task3);
+//
+//            MainActivity.runOnUIDelay(() -> mViewModel.setPushedPackages(test), 4000);
+//        }
     }
 
     @Nullable

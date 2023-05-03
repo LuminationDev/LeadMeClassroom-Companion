@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.lumination.leadmeclassroom_companion.models.Application;
 import com.lumination.leadmeclassroom_companion.models.Task;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ public class DashboardViewModel extends ViewModel {
     private MutableLiveData<String> roomCode = new MutableLiveData<>();
     private MutableLiveData<String> username = new MutableLiveData<>();
     private MutableLiveData<String> currentPackage = new MutableLiveData<>("null");
-    private MutableLiveData<List<String>> installedPackages = new MutableLiveData<>();
+    private MutableLiveData<List<Application>> installedPackages = new MutableLiveData<>();
     private MutableLiveData<List<Task>> pushedPackages = new MutableLiveData<>(new ArrayList<>());
     private MutableLiveData<String> packageListType = new MutableLiveData<>("carousel");
     private MutableLiveData<Task> selectedTask = new MutableLiveData<>();
@@ -25,7 +26,6 @@ public class DashboardViewModel extends ViewModel {
         roomCode = new MutableLiveData<>();
         username = new MutableLiveData<>();
         currentPackage = new MutableLiveData<>("null");
-        installedPackages = new MutableLiveData<>();
         pushedPackages = new MutableLiveData<>();
     }
 
@@ -88,7 +88,7 @@ public class DashboardViewModel extends ViewModel {
     /**
      * Get the list of installed packages for the local device.
      */
-    public LiveData<List<String>> getInstalledPackages() {
+    public LiveData<List<Application>> getInstalledPackages() {
         if (installedPackages == null) {
             installedPackages = new MutableLiveData<>();
         }
@@ -99,7 +99,7 @@ public class DashboardViewModel extends ViewModel {
     /**
      * Set the list of packages that are currently installed.
      */
-    public void setInstalledPackages(List<String> newValue) {
+    public void setInstalledPackages(List<Application> newValue) {
         installedPackages.setValue(newValue);
     }
 
