@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.lumination.leadmeclassroom_companion.models.Application;
 import com.lumination.leadmeclassroom_companion.services.FirebaseService;
 import com.lumination.leadmeclassroom_companion.services.LeadMeService;
 import com.lumination.leadmeclassroom_companion.services.OverlayService;
@@ -175,8 +176,11 @@ public class MainActivity extends AppCompatActivity {
                 .getPackageManager()
                 .queryIntentActivities(intent, 0);
 
-        List<String> packages = rawAppList.stream()
-                .map(info -> info.activityInfo.packageName).collect(Collectors.toList());
+        List<Application> packages = rawAppList.stream()
+                .map(info -> new Application(
+                        info.loadLabel(getPackageManager()).toString(),
+                        info.activityInfo.packageName))
+                .collect(Collectors.toList());
 
         DashboardFragment.mViewModel.setInstalledPackages(packages);
     }
