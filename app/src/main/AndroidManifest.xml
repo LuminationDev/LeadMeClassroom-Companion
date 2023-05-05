@@ -70,6 +70,12 @@
             android:foregroundServiceType="mediaProjection"
             android:stopWithTask="true"/>
 
+        <service
+            android:enabled="true"
+            android:name=".services.PixelService"
+            android:foregroundServiceType="mediaProjection"
+            android:stopWithTask="true"/>
+
     </application>
 
     <queries>

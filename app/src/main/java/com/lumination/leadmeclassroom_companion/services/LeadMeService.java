@@ -99,7 +99,7 @@ public class LeadMeService extends Service {
                     Log.e(TAG, e.toString());
                 }
             } else if(action.equals(Constants.ACTION_DISCONNECT)) {
-                Log.e(TAG, "Disconnect clicked: REMOVE USER FROM FIREBASE");
+                MainActivity.getInstance().logout();
             }
         }
     }

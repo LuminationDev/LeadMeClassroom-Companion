@@ -4,11 +4,15 @@ import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
+import android.util.Log;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
@@ -18,6 +22,7 @@ import com.lumination.leadmeclassroom_companion.models.Application;
 import com.lumination.leadmeclassroom_companion.services.FirebaseService;
 import com.lumination.leadmeclassroom_companion.services.LeadMeService;
 import com.lumination.leadmeclassroom_companion.services.OverlayService;
+import com.lumination.leadmeclassroom_companion.services.PixelService;
 import com.lumination.leadmeclassroom_companion.ui.login.LoginFragment;
 import com.lumination.leadmeclassroom_companion.ui.login.classcode.ClassCodeFragment;
 import com.lumination.leadmeclassroom_companion.ui.login.classcode.ClassCodeViewModel;
@@ -58,8 +63,10 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
+        hideAndroidBars();
+
         startFirebaseService();
-        startOverlayService();
+        startPixelService();
         preloadViewModels();
 
         if (savedInstanceState == null) {
@@ -73,6 +80,26 @@ public class MainActivity extends AppCompatActivity {
         checkForOverlayPermission();
 
         instance = this;
+    }
+
+    /**
+     * Hide the navigation and status bars.
+     */
+    private void hideAndroidBars() {
+        WindowInsetsController controller = getWindow().getInsetsController();
+        if (controller != null) {
+            controller.hide(WindowInsets.Type.statusBars());
+            controller.hide(WindowInsets.Type.navigationBars());
+
+            controller.setSystemBarsAppearance(
+                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS |
+                            WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
+            );
+            controller.setSystemBarsBehavior(
+                    WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            );
+        }
     }
 
     /**
@@ -158,11 +185,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Start the Overlay service
+     * Start the Pixel service
+     */
+    public void startPixelService() {
+        Intent pixelIntent = new Intent(getApplicationContext(), PixelService.class);
+        startService(pixelIntent);
+    }
+
+    /**
+     * Start the Overlay service and block a learner's screen.
      */
     public void startOverlayService() {
         Intent overlayIntent = new Intent(getApplicationContext(), OverlayService.class);
         startService(overlayIntent);
+    }
+
+    /**
+     * Stop the Overlay service and unblock a learner's screen.
+     */
+    public void stopOverlayService() {
+        Intent overlayIntent = new Intent(getApplicationContext(), OverlayService.class);
+        stopService(overlayIntent);
     }
 
     /**
@@ -186,6 +229,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Change the current audio settings on a device. This will either mute or un-mute the device
+     * @param mute A boolean representing whether to mute(true) or unmute(false) the device.
+     */
+    public void changeAudioSettings(boolean mute) {
+        AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        if (audioManager != null) {
+            int flag = mute ? AudioManager.ADJUST_MUTE : AudioManager.ADJUST_UNMUTE;
+
+            audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, flag, 0);
+            audioManager.adjustStreamVolume(AudioManager.STREAM_RING, flag, 0);
+            audioManager.adjustStreamVolume(AudioManager.STREAM_ALARM, flag, 0);
+            // mute other audio streams as needed?
+        }
+    }
+
+    /**
      * Remove the user from the Firebase collection, reset all view model data fields and then
      * return to the login screen.
      */
@@ -196,8 +255,14 @@ public class MainActivity extends AppCompatActivity {
         // Reset view models
         clearViewModels();
 
-        // Return to the class code screen
-        fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        // Return to the class code screen - attempt to pop the entire back stack
+        try {
+            fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+        catch (Exception e) {
+            Log.e("LOGOUT", e.toString());
+        }
+
         fragmentManager.beginTransaction()
                 .replace(R.id.container, LoginFragment.class, null)
                 .commitNow();

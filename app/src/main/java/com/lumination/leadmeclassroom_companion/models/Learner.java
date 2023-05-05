@@ -8,7 +8,6 @@ public class Learner {
     public String name;
     public String classcode;
     public String currentPackage = "com.lumination.leadmeclassroom_companion";
-    public String toLoadPackage = "com.lumination.leadmeclassroom_companion";
     public List<Application> applications;
     public List<String> tasks = new ArrayList<>(Collections.singletonList("Empty"));
 

@@ -42,6 +42,7 @@ public class FirebaseService extends Service {
 
     private static final DatabaseReference database = getDatabase();
     private static DatabaseReference roomReference;
+    private static DatabaseReference nameReference;
     private static DatabaseReference taskReference;
     private static DatabaseReference allPackageReference;
     private static DatabaseReference individualPackageReference;
@@ -201,14 +202,17 @@ public class FirebaseService extends Service {
         Learner test = new Learner(username, roomCode, DashboardFragment.mViewModel.getInstalledPackages().getValue());
         database.child(followerRef).child(roomCode).child(uuid).setValue(test);
 
-        //Add the additional firebase listeners
+        //Listen for remote name changes
+        nameReference = database.child(followerRef).child(roomCode).child(uuid).child("name");
+        nameReference.addValueEventListener(nameListener);
+
+        //Listen for tasks (groups of applications) being set by a leader
         taskReference = database.child(followerRef).child(roomCode).child(uuid).child("tasks");
         taskReference.addValueEventListener(taskListener);
 
         //Listen for both individual actions and group wide actions
         allPackageReference = database.child("classCode").child(roomCode).child("request").child(messageRef);
         individualPackageReference = database.child(followerRef).child(roomCode).child(uuid).child("request");
-
         allPackageReference.addChildEventListener(requestListener);
         individualPackageReference.addChildEventListener(requestListener);
     }
@@ -222,6 +226,26 @@ public class FirebaseService extends Service {
         public void onDataChange(@NonNull DataSnapshot snapshot) {
             if(snapshot.exists()) {
                 Log.e("Task", snapshot.getValue().toString());
+            }
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+            Log.e(TAG, "Database connection cancelled.");
+        }
+    };
+
+    /**
+     * A listener function that is attached to the learners name field.
+     */
+    private static final ValueEventListener nameListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            if(snapshot.exists()) {
+                if(snapshot.getValue() == null) return;
+
+                Log.e("Task", snapshot.getValue().toString());
+                DashboardFragment.mViewModel.setUsername(snapshot.getValue().toString());
             }
         }
 
@@ -251,6 +275,23 @@ public class FirebaseService extends Service {
                             } else {
                                 PackageManager.ChangeActivePackage(request.getAction());
                             }
+                            break;
+
+                        case "force_active_website":
+                            PackageManager.ChangeActiveWebsite(request.getAction());
+                            break;
+
+                        case "screenControl":
+                            Log.e(TAG, "Lock/unlock screen: " + request.getAction());
+                            if (request.getAction().equals("block")) {
+                                MainActivity.getInstance().startOverlayService();
+                            } else {
+                                MainActivity.getInstance().stopOverlayService();
+                            }
+                            break;
+
+                        case "device_audio":
+                            MainActivity.getInstance().changeAudioSettings(request.getAction().equals("mute"));
                             break;
 
                         case "end_session":
@@ -293,6 +334,9 @@ public class FirebaseService extends Service {
     public static void removeFollower() {
         database.child(followerRef).child(roomCode).child(uuid).removeValue();
 
+        if(nameReference != null) {
+            nameReference.removeEventListener(nameListener);
+        }
         if(taskReference != null) {
             taskReference.removeEventListener(taskListener);
         }
