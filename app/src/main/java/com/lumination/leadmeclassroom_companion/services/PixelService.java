@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 
 import com.lumination.leadmeclassroom_companion.R;
 
-public class OverlayService extends Service {
+public class PixelService extends Service {
     private WindowManager mWindowManager;
     private View mOverlayView;
 
@@ -26,7 +26,7 @@ public class OverlayService extends Service {
 
         // Inflate the custom XML layout file
         LayoutInflater inflater = LayoutInflater.from(this);
-        mOverlayView = inflater.inflate(R.layout.overlay_page, null);
+        mOverlayView = inflater.inflate(R.layout.overlay_pixel_page, null);
 
         // Get the WindowManager service
         mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);

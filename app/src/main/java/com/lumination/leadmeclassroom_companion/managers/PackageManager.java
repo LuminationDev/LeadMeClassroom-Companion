@@ -2,6 +2,7 @@ package com.lumination.leadmeclassroom_companion.managers;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 
 import com.lumination.leadmeclassroom_companion.MainActivity;
@@ -35,6 +36,30 @@ public class PackageManager {
                 launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY);
                 MainActivity.getInstance().startActivity(launchIntent);
             }
+        } catch (ActivityNotFoundException e) {
+            // Define what your app should do if no activity can handle the intent.
+            Log.e(TAG, "Application not found: " + e);
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+        }
+    }
+
+    /**
+     * Open a website with the local web browser to the supplied website page.
+     * @param website A string of the URL to load.
+     */
+    public static void ChangeActiveWebsite(String website) {
+        //Make sure the website starts with http:// or https:// otherwise device does not know what to do.
+        String temp = website;
+        if(!website.startsWith("http")) {
+            temp = "https://" + temp;
+        }
+
+        try {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(temp));
+            browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY);
+            browserIntent.addCategory(Intent.CATEGORY_DEFAULT);
+            MainActivity.getInstance().startActivity(browserIntent);
         } catch (ActivityNotFoundException e) {
             // Define what your app should do if no activity can handle the intent.
             Log.e(TAG, "Application not found: " + e);

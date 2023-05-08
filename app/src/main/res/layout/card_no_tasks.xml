@@ -36,7 +36,8 @@
         android:text="@string/library"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        android:backgroundTint="@color/blue"
+        android:backgroundTint="@color/grey"
+        android:enabled="false"
         app:cornerRadius="10dp"
         app:layout_flexShrink="0"
         app:rippleColor="@color/grey" />
