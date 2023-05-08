@@ -66,7 +66,7 @@
 
         <service
             android:enabled="true"
-            android:name=".services.OverlayService"
+            android:name=".services.ScreenBlockService"
             android:foregroundServiceType="mediaProjection"
             android:stopWithTask="true"/>
 

@@ -284,9 +284,9 @@ public class FirebaseService extends Service {
                         case "screenControl":
                             Log.e(TAG, "Lock/unlock screen: " + request.getAction());
                             if (request.getAction().equals("block")) {
-                                MainActivity.getInstance().startOverlayService();
+                                MainActivity.getInstance().startScreenBlockService();
                             } else {
-                                MainActivity.getInstance().stopOverlayService();
+                                MainActivity.getInstance().stopScreenBlockService();
                             }
                             break;
 

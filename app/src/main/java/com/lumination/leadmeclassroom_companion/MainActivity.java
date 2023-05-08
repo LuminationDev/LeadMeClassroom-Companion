@@ -21,7 +21,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.lumination.leadmeclassroom_companion.models.Application;
 import com.lumination.leadmeclassroom_companion.services.FirebaseService;
 import com.lumination.leadmeclassroom_companion.services.LeadMeService;
-import com.lumination.leadmeclassroom_companion.services.OverlayService;
+import com.lumination.leadmeclassroom_companion.services.ScreenBlockService;
 import com.lumination.leadmeclassroom_companion.services.PixelService;
 import com.lumination.leadmeclassroom_companion.ui.login.LoginFragment;
 import com.lumination.leadmeclassroom_companion.ui.login.classcode.ClassCodeFragment;
@@ -195,17 +195,17 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Start the Overlay service and block a learner's screen.
      */
-    public void startOverlayService() {
-        Intent overlayIntent = new Intent(getApplicationContext(), OverlayService.class);
-        startService(overlayIntent);
+    public void startScreenBlockService() {
+        Intent screenBlockIntent = new Intent(getApplicationContext(), ScreenBlockService.class);
+        startService(screenBlockIntent);
     }
 
     /**
      * Stop the Overlay service and unblock a learner's screen.
      */
-    public void stopOverlayService() {
-        Intent overlayIntent = new Intent(getApplicationContext(), OverlayService.class);
-        stopService(overlayIntent);
+    public void stopScreenBlockService() {
+        Intent screenBlockIntent = new Intent(getApplicationContext(), ScreenBlockService.class);
+        stopService(screenBlockIntent);
     }
 
     /**

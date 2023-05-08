@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 
 import com.lumination.leadmeclassroom_companion.R;
 
-public class OverlayService extends Service {
+public class ScreenBlockService extends Service {
     private WindowManager mWindowManager;
     private View mOverlayView;
 
