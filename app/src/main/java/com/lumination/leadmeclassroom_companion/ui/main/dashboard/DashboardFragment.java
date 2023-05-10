@@ -12,17 +12,11 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.lumination.leadmeclassroom_companion.MainActivity;
 import com.lumination.leadmeclassroom_companion.R;
 import com.lumination.leadmeclassroom_companion.databinding.MainPageDashboardBinding;
-import com.lumination.leadmeclassroom_companion.models.Task;
 import com.lumination.leadmeclassroom_companion.ui.main.MainFragment;
 import com.lumination.leadmeclassroom_companion.ui.main.tasks.NoTasksFragment;
 import com.lumination.leadmeclassroom_companion.ui.main.tasks.TaskSelectionFragment;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 public class DashboardFragment extends Fragment {
     public final static String TAG = "DASHBOARD_FRAGMENT";

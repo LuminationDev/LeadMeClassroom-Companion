@@ -7,6 +7,7 @@ import java.util.List;
 public class Learner {
     public String name;
     public String classcode;
+    public String action = "None"; //FOR VR TESTING ONLY
     public String currentPackage = "com.lumination.leadmeclassroom_companion";
     public List<Application> applications;
     public List<String> tasks = new ArrayList<>(Collections.singletonList("Empty"));
