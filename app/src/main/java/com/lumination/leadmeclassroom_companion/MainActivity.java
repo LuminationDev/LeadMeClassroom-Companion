@@ -3,6 +3,7 @@ package com.lumination.leadmeclassroom_companion;
 import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ResolveInfo;
 import android.media.AudioManager;
 import android.net.Uri;
@@ -29,6 +30,7 @@ import com.lumination.leadmeclassroom_companion.ui.login.classcode.ClassCodeView
 import com.lumination.leadmeclassroom_companion.ui.main.dashboard.DashboardFragment;
 import com.lumination.leadmeclassroom_companion.ui.main.dashboard.DashboardViewModel;
 import com.lumination.leadmeclassroom_companion.utilities.Constants;
+import com.lumination.leadmeclassroom_companion.vrplayer.VRPlayerBroadcastReceiver;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     static { UIHandler = new Handler(Looper.getMainLooper()); }
     public static FragmentManager fragmentManager;
     public ViewModelProvider viewModelProvider;
+    private VRPlayerBroadcastReceiver vrBroadcastReceiver;
 
     /**
      * un a function on the main UI thread.
@@ -80,6 +83,17 @@ public class MainActivity extends AppCompatActivity {
         checkForOverlayPermission();
 
         instance = this;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        logout();
+
+        if(vrBroadcastReceiver != null) {
+            unregisterReceiver(vrBroadcastReceiver);
+        }
     }
 
     /**
@@ -209,6 +223,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Listen for broadcasts from the associated VR player.
+     */
+    public void registerBroadcastReceiver() {
+        if(vrBroadcastReceiver != null) return;
+
+        vrBroadcastReceiver = new VRPlayerBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("com.lumination.VRPlayer");
+        registerReceiver(vrBroadcastReceiver, intentFilter);
+    }
+
+    /**
      * Query the device for the currently installed packages. Extract the packages names so they
      * can be sent to the teacher.
      */
@@ -224,6 +250,13 @@ public class MainActivity extends AppCompatActivity {
                         info.loadLabel(getPackageManager()).toString(),
                         info.activityInfo.packageName))
                 .collect(Collectors.toList());
+
+        //Collect the default home package as this will not be in the install package list by
+        //default.
+        final Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+        homeIntent.addCategory(Intent.CATEGORY_HOME);
+        final ResolveInfo res = getPackageManager().resolveActivity(homeIntent, 0);
+        packages.add(new Application("Home Screen", res.activityInfo.packageName));
 
         DashboardFragment.mViewModel.setInstalledPackages(packages);
     }

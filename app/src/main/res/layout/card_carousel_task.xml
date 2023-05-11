@@ -52,7 +52,7 @@
                 android:layout_marginBottom="24dp"
                 android:textColor="@color/black"
                 android:textSize="13sp"
-                android:text="@{task.packageName, default=`Package Name`}"/>
+                android:text="@{task.link, default=`Package Name`}"/>
 
             <TextView
                 android:layout_width="wrap_content"

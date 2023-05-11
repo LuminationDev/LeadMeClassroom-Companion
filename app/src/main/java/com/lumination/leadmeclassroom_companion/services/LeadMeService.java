@@ -107,7 +107,7 @@ public class LeadMeService extends Service {
     private void CreateNotificationChannel() {
         usageStatsManager = (UsageStatsManager) MainActivity.getInstance().getSystemService(Context.USAGE_STATS_SERVICE);
 
-        executorService.scheduleAtFixedRate((Runnable) this::CheckAppActivity, 0, interval, TimeUnit.SECONDS);
+        executorService.scheduleAtFixedRate(this::CheckAppActivity, 0, interval, TimeUnit.SECONDS);
 
         NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
                 CHANNEL_NAME,

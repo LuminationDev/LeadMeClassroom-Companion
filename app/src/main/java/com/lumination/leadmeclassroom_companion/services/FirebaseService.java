@@ -197,6 +197,7 @@ public class FirebaseService extends Service {
      */
     public static void addFollower(String username) {
         MainActivity.getInstance().startLeadMeService();
+        MainActivity.getInstance().registerBroadcastReceiver();
 
         //Create an entry in firebase for the new Android user
         Learner test = new Learner(username, roomCode, DashboardFragment.mViewModel.getInstalledPackages().getValue());
@@ -365,5 +366,13 @@ public class FirebaseService extends Service {
      */
     public static void changeUsername(String newName) {
         database.child(followerRef).child(roomCode).child(uuid).child("name").setValue(newName);
+    }
+
+    /**
+     * Update the android follower entry with the new action receieved from the VR player.
+     * @param newName A String of the new action to be submitted.
+     */
+    public static void changeCurrentAction(String newName) {
+        database.child(followerRef).child(roomCode).child(uuid).child("action").setValue(newName);
     }
 }

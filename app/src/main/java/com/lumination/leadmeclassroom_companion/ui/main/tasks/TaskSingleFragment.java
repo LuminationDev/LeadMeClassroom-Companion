@@ -45,7 +45,7 @@ public class TaskSingleFragment extends Fragment {
         View finalResult = binding.getRoot();
 
         ImageView imageView = finalResult.findViewById(R.id.application_icon);
-        TaskHelpers.setApplicationIconOrDefault(imageView, task.packageName);
+        TaskHelpers.setApplicationIconOrDefault(imageView, task.link);
 
         TextView back = view.findViewById(R.id.back_to_list);
         back.setOnClickListener(v -> {
@@ -54,7 +54,7 @@ public class TaskSingleFragment extends Fragment {
         });
 
         finalResult.findViewById(R.id.launch_button).setOnClickListener(v -> {
-            PackageManager.ChangeActivePackage(task.packageName);
+            PackageManager.ChangeActivePackage(task.link);
         });
 
         return view;
