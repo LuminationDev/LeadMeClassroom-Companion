@@ -6,11 +6,11 @@ import android.content.Intent;
 import com.lumination.leadmeclassroom_companion.MainActivity;
 
 public class VRPlayerManager {
-    private final static String packageName = "com.lumination.VRPlayer";
+    public final static String packageName = "com.lumination.VRPlayer";
     private final static String className = "com.lumination.receiver.ReceiverPlugin";
 
     //Create an intent based on the action supplied and send it to the external application
-    private static void newIntent(String action) {
+    public static void newIntent(String action) {
         // sendIntent is the object that will be broadcast outside our app
         Intent sendIntent = new Intent();
 

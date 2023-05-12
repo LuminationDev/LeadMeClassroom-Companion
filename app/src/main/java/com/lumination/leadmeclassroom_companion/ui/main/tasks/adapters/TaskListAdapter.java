@@ -64,7 +64,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
             View finalResult = binding.getRoot();
 
             ImageView imageView = finalResult.findViewById(R.id.application_icon);
-            TaskHelpers.setApplicationIconOrDefault(imageView, task.link);
+            TaskHelpers.setIconOrDefault(imageView, task.type, task.link);
 
             finalResult.setOnClickListener(v -> {
                 DashboardFragment.mViewModel.setSelectedTask(task);
