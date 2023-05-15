@@ -20,6 +20,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.lumination.leadmeclassroom_companion.MainActivity;
 import com.lumination.leadmeclassroom_companion.R;
 import com.lumination.leadmeclassroom_companion.managers.PackageManager;
@@ -41,6 +43,7 @@ public class FirebaseService extends Service {
     private static final String CHANNEL_NAME = "Firebase_Communication";
 
     private static final DatabaseReference database = getDatabase();
+    private static final StorageReference storage = getStorage();
     private static DatabaseReference roomReference;
     private static DatabaseReference nameReference;
     private static DatabaseReference taskReference;
@@ -125,6 +128,15 @@ public class FirebaseService extends Service {
     private static DatabaseReference getDatabase()
     {
         return FirebaseDatabase.getInstance("https://browserextension-bc94e-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference();
+    }
+
+    /**
+     * Collect the reference to the Classroom database.
+     * @return A DatabaseReference of the connected Firebase database.
+     */
+    private static StorageReference getStorage()
+    {
+        return FirebaseStorage.getInstance("gs://browserextension-bc94e.appspot.com").getReference();
     }
 
     /**
@@ -277,6 +289,10 @@ public class FirebaseService extends Service {
                             }
                             break;
 
+                        case "uploadIcons":
+                            PackageManager.loadApplicationIcons(request.getAction());
+                            break;
+
                         case "force_active_website":
                             PackageManager.ChangeActiveWebsite(request.getAction());
                             break;
@@ -365,5 +381,9 @@ public class FirebaseService extends Service {
      */
     public static void changeUsername(String newName) {
         database.child(followerRef).child(roomCode).child(uuid).child("name").setValue(newName);
+    }
+
+    public static void uploadFile(String path, byte[] bytes) {
+        storage.child("app_icons").child(path).putBytes(bytes);
     }
 }
