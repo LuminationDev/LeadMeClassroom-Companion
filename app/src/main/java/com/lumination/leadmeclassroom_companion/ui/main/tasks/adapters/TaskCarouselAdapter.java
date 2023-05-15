@@ -64,10 +64,10 @@ public class TaskCarouselAdapter extends RecyclerView.Adapter<TaskCarouselAdapte
             View finalResult = binding.getRoot();
 
             ImageView imageView = finalResult.findViewById(R.id.application_icon);
-            TaskHelpers.setApplicationIconOrDefault(imageView, task.link);
+            TaskHelpers.setIconOrDefault(imageView, task.type, task.link);
 
             finalResult.findViewById(R.id.launch_button).setOnClickListener(v -> {
-                PackageManager.ChangeActivePackage(task.link);
+                PackageManager.ChangeActivity(task.type, task.link);
             });
 
             taskBindings.add(binding);
