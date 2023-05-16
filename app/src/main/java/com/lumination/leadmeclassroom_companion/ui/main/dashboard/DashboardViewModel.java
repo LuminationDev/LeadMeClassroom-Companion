@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.lumination.leadmeclassroom_companion.models.Application;
 import com.lumination.leadmeclassroom_companion.models.Task;
+import com.lumination.leadmeclassroom_companion.models.Video;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ public class DashboardViewModel extends ViewModel {
     private MutableLiveData<String> username = new MutableLiveData<>();
     private MutableLiveData<String> currentPackage = new MutableLiveData<>("null");
     private MutableLiveData<List<Application>> installedPackages = new MutableLiveData<>();
+    private MutableLiveData<List<Video>> localVideos = new MutableLiveData<>();
     private MutableLiveData<List<Task>> pushedPackages = new MutableLiveData<>(new ArrayList<>());
     private MutableLiveData<String> packageListType = new MutableLiveData<>("carousel");
     private MutableLiveData<Task> selectedTask = new MutableLiveData<>();
@@ -81,8 +83,6 @@ public class DashboardViewModel extends ViewModel {
      */
     public void setCurrentPackage(String newValue) {
         currentPackage.setValue(newValue);
-
-        //TODO Update firebase
     }
 
     /**
@@ -101,6 +101,24 @@ public class DashboardViewModel extends ViewModel {
      */
     public void setInstalledPackages(List<Application> newValue) {
         installedPackages.setValue(newValue);
+    }
+
+    /**
+     * Get the list of video files for the local device.
+     */
+    public LiveData<List<Video>> getLocalVideos() {
+        if (localVideos == null) {
+            localVideos = new MutableLiveData<>();
+        }
+
+        return localVideos;
+    }
+
+    /**
+     * Set the list of video files that are on the local device.
+     */
+    public void setLocalVideos(List<Video> newValue) {
+        localVideos.setValue(newValue);
     }
 
     /**

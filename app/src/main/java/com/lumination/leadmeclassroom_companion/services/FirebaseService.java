@@ -26,6 +26,7 @@ import com.lumination.leadmeclassroom_companion.managers.PackageManager;
 import com.lumination.leadmeclassroom_companion.models.Learner;
 import com.lumination.leadmeclassroom_companion.models.Request;
 import com.lumination.leadmeclassroom_companion.models.Task;
+import com.lumination.leadmeclassroom_companion.models.Video;
 import com.lumination.leadmeclassroom_companion.ui.login.LoginFragment;
 import com.lumination.leadmeclassroom_companion.ui.login.classcode.ClassCodeFragment;
 import com.lumination.leadmeclassroom_companion.ui.login.username.UsernameFragment;
@@ -35,6 +36,7 @@ import com.lumination.leadmeclassroom_companion.vrplayer.VRPlayerManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -205,9 +207,19 @@ public class FirebaseService extends Service {
         MainActivity.getInstance().startLeadMeService();
         MainActivity.getInstance().registerBroadcastReceiver();
 
+        //Get a firebase friendly version of the local videos
+        List<Map<String, Object>> videos = new ArrayList<>();
+        if(DashboardFragment.mViewModel.getLocalVideos().getValue() != null) {
+            videos = DashboardFragment.mViewModel.getLocalVideos()
+                    .getValue()
+                    .stream()
+                    .map(Video::getVideoInfo)
+                    .collect(Collectors.toList());
+        }
+
         //Create an entry in firebase for the new Android user
-        Learner test = new Learner(username, roomCode, DashboardFragment.mViewModel.getInstalledPackages().getValue());
-        database.child(followerRef).child(roomCode).child(uuid).setValue(test);
+        Learner follower = new Learner(username, roomCode, DashboardFragment.mViewModel.getInstalledPackages().getValue(), videos);
+        database.child(followerRef).child(roomCode).child(uuid).setValue(follower);
 
         //Listen for remote name changes
         nameReference = database.child(followerRef).child(roomCode).child(uuid).child("name");
@@ -306,12 +318,16 @@ public class FirebaseService extends Service {
                             PackageManager.ChangeActiveWebsite(request.getAction());
                             break;
 
-                        case "video":
+                        case "video_link":
                             PackageManager.ChangeActivePackage(VRPlayerManager.packageName);
                             //Change url to a safe link (no ':' otherwise cannot split properly)
                             String safeLink = request.getAction().replaceAll(":", "|");
-
                             MainActivity.runOnUIDelay(() -> VRPlayerManager.determineMediaType(safeLink, "1", "Link"), 3000);
+                            break;
+
+                        case "video_local":
+                            PackageManager.ChangeActivePackage(VRPlayerManager.packageName);
+                            MainActivity.runOnUIDelay(() -> VRPlayerManager.determineMediaType(request.getAction(), "1", "Video"), 3000);
                             break;
 
                         case "video_action":

@@ -1,12 +1,15 @@
 package com.lumination.leadmeclassroom_companion;
 
+import android.Manifest;
 import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -16,6 +19,8 @@ import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -30,6 +35,7 @@ import com.lumination.leadmeclassroom_companion.ui.login.classcode.ClassCodeView
 import com.lumination.leadmeclassroom_companion.ui.main.dashboard.DashboardFragment;
 import com.lumination.leadmeclassroom_companion.ui.main.dashboard.DashboardViewModel;
 import com.lumination.leadmeclassroom_companion.utilities.Constants;
+import com.lumination.leadmeclassroom_companion.utilities.MediaHelpers;
 import com.lumination.leadmeclassroom_companion.vrplayer.VRPlayerBroadcastReceiver;
 
 import java.util.List;
@@ -76,13 +82,16 @@ public class MainActivity extends AppCompatActivity {
             setupFragmentManager();
         }
 
-        //Load up the installed packages
-        collectInstalledPackages();
-
+        //TODO need to manage permissions better
         checkForUsageStatPermission();
         checkForOverlayPermission();
+        checkForStoragePermission();
 
         instance = this;
+
+        //Load up the installed packages and video files
+        collectInstalledPackages();
+        MediaHelpers.collectVideoFiles();
     }
 
     @Override
@@ -148,6 +157,28 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
         intent.setData(Uri.parse("package:" + getPackageName()));
         startActivity(intent);
+    }
+
+    /**
+     * Ask the user for storage permission if it has not already been granted. For older devices the
+     * READ_EXTERNAL_STORAGE is required whilst SDK 33 and above includes the new READ_MEDIA_VIDEO.
+     */
+    private void checkForStoragePermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_VIDEO)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.READ_MEDIA_VIDEO},
+                        123);
+            }
+        } else {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        123);
+            }
+        }
     }
 
     /**

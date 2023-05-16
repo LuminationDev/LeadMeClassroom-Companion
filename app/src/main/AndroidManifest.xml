@@ -13,6 +13,14 @@
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
 
+    <!--Required for older mobile devices that are below SDK 33-->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+    <!--Required only if your app needs to access videos that other apps created-->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -22,6 +30,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.LeadMeClassroomCompanion"
+        android:requestLegacyExternalStorage="true"
         tools:targetApi="33">
 
         <meta-data android:name="android.permission.PACKAGE_USAGE_STATS"
@@ -54,7 +63,8 @@
 
         <receiver
             android:name=".vrplayer.VRPlayerBroadcastReceiver"
-            android:exported="true">
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
             <intent-filter>
                 <action android:name="com.lumination.VRPlayer" />
             </intent-filter>
