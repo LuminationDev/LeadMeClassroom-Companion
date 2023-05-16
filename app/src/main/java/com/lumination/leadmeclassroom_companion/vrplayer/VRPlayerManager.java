@@ -9,8 +9,32 @@ public class VRPlayerManager {
     public final static String packageName = "com.lumination.VRPlayer";
     private final static String className = "com.lumination.receiver.ReceiverPlugin";
 
+    /**
+     * Determine what type of media the VR player has to load, this will be either a Link or a URI.
+     * @param path A url or uri of the video location or name to play
+     * @param startTime A string of the time to start the video at
+     * @param mediaType A string describing how to treat the action
+     */
+    public static void determineMediaType(String path, String startTime, String mediaType) {
+        switch(mediaType) {
+            case "Link":
+                newIntent("File path:" + path + ":" + startTime + ":" + mediaType);
+                break;
+            case "Video":
+                break;
+        }
+    }
+
+    /**
+     * Send a controlling action to the VR player, this may be stop, play or pause for example.
+     * @param videoAction A string detailing what VR player's internal video player should do.
+     */
+    public static void videoAction(String videoAction) {
+        newIntent(videoAction);
+    }
+
     //Create an intent based on the action supplied and send it to the external application
-    public static void newIntent(String action) {
+    private static void newIntent(String action) {
         // sendIntent is the object that will be broadcast outside our app
         Intent sendIntent = new Intent();
 

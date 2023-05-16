@@ -311,10 +311,11 @@ public class FirebaseService extends Service {
                             //Change url to a safe link (no ':' otherwise cannot split properly)
                             String safeLink = request.getAction().replaceAll(":", "|");
 
-                            MainActivity.runOnUIDelay(() -> {
-                                String action = "File path:" + safeLink + ":" + "1" + ":" + "Link";
-                                VRPlayerManager.newIntent(action);
-                            }, 3000);
+                            MainActivity.runOnUIDelay(() -> VRPlayerManager.determineMediaType(safeLink, "1", "Link"), 3000);
+                            break;
+
+                        case "video_action":
+                            VRPlayerManager.videoAction(request.getAction());
                             break;
 
                         case "screenControl":
@@ -403,10 +404,11 @@ public class FirebaseService extends Service {
     }
 
     /**
-     * Update the android follower entry with the new action receieved from the VR player.
-     * @param newName A String of the new action to be submitted.
+     * Update the android follower entry with the new attribute received from the VR player.
+     * @param attribute A String of the type of information to be submitted.
+     * @param info A String of the new information to be submitted.
      */
-    public static void changeCurrentAction(String newName) {
-        database.child(followerRef).child(roomCode).child(uuid).child("action").setValue(newName);
+    public static void changeVideoStatus(String attribute, String info) {
+        database.child(followerRef).child(roomCode).child(uuid).child(attribute).setValue(info);
     }
 }
