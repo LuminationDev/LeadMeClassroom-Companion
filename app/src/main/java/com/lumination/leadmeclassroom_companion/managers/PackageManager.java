@@ -15,6 +15,7 @@ import com.lumination.leadmeclassroom_companion.MainActivity;
 import com.lumination.leadmeclassroom_companion.services.FirebaseService;
 
 import java.io.ByteArrayOutputStream;
+import com.lumination.leadmeclassroom_companion.vrplayer.VRPlayerManager;
 
 /**
  * A class with the purpose of controlling which packages are currently active.
@@ -125,6 +126,40 @@ public class PackageManager {
             Log.e(TAG, "Application not found: " + e);
         } catch (Exception e) {
             Log.e(TAG, e.toString());
+        }
+    }
+
+    /**
+     * Open the VR player, after an initial 3 seconds delay send through the source link.
+     * @param link A string of the URL to load in the video player.
+     */
+    public static void ChangeActiveVideo(String link) {
+        PackageManager.ChangeActivePackage(VRPlayerManager.packageName);
+        //Change url to a safe link (no ':' otherwise cannot split properly)
+        String safeLink = link.replaceAll(":", "|");
+
+        MainActivity.runOnUIDelay(() -> {
+            String action = "File path:" + safeLink + ":" + "1" + ":" + "Link";
+            VRPlayerManager.newIntent(action);
+        }, 3000);
+    }
+
+    /**
+     * Change the current activity based on the media type supplied.
+     * @param mediaType A string describing what application will handle the supplied value.
+     * @param value A string of the package name, website url or video link.
+     */
+    public static void ChangeActivity(String mediaType, String value) {
+        switch(mediaType) {
+            case "Application":
+                ChangeActivePackage(value);
+                break;
+            case "Website":
+                ChangeActiveWebsite(value);
+                break;
+            case "Video":
+                ChangeActiveVideo(value);
+                break;
         }
     }
 }

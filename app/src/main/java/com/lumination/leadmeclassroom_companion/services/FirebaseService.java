@@ -27,12 +27,18 @@ import com.lumination.leadmeclassroom_companion.R;
 import com.lumination.leadmeclassroom_companion.managers.PackageManager;
 import com.lumination.leadmeclassroom_companion.models.Learner;
 import com.lumination.leadmeclassroom_companion.models.Request;
+import com.lumination.leadmeclassroom_companion.models.Task;
 import com.lumination.leadmeclassroom_companion.ui.login.LoginFragment;
 import com.lumination.leadmeclassroom_companion.ui.login.classcode.ClassCodeFragment;
 import com.lumination.leadmeclassroom_companion.ui.login.username.UsernameFragment;
 import com.lumination.leadmeclassroom_companion.ui.main.dashboard.DashboardFragment;
+import com.lumination.leadmeclassroom_companion.vrplayer.VRPlayerManager;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * A service class responsible for maintain listeners on firebase collections.
@@ -209,6 +215,7 @@ public class FirebaseService extends Service {
      */
     public static void addFollower(String username) {
         MainActivity.getInstance().startLeadMeService();
+        MainActivity.getInstance().registerBroadcastReceiver();
 
         //Create an entry in firebase for the new Android user
         Learner test = new Learner(username, roomCode, DashboardFragment.mViewModel.getInstalledPackages().getValue());
@@ -237,7 +244,25 @@ public class FirebaseService extends Service {
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
             if(snapshot.exists()) {
-                Log.e("Task", snapshot.getValue().toString());
+                if(snapshot.getValue() != null) {
+                    Log.e("Tasks", snapshot.getValue().toString());
+
+                    List<String> pushedTasks = (List<String>) snapshot.getValue();
+
+                    List<Task> tasks = pushedTasks.stream()
+                            .map(pushedTask -> {
+                                String[] split = pushedTask.split("\\|");
+                                return new Task(split[0], split[1], split[2], null);
+                            })
+                            .collect(Collectors.toList());
+
+                    DashboardFragment.mViewModel.setPushedPackages(tasks.isEmpty() ? Collections.emptyList() : tasks);
+                } else {
+                    DashboardFragment.mViewModel.setPushedPackages(new ArrayList<>());
+                }
+            } else {
+                Log.e("Tasks", "No tasks");
+                DashboardFragment.mViewModel.setPushedPackages(new ArrayList<>());
             }
         }
 
@@ -281,7 +306,7 @@ public class FirebaseService extends Service {
                     if(request == null) return;
 
                     switch(request.getType()) {
-                        case "force_active_app":
+                        case "application":
                             if(request.getAction().equals(MainActivity.getInstance().getPackageName())) {
                                 PackageManager.ReturnHome();
                             } else {
@@ -293,12 +318,22 @@ public class FirebaseService extends Service {
                             PackageManager.loadApplicationIcons(request.getAction());
                             break;
 
-                        case "force_active_website":
+                        case "website":
                             PackageManager.ChangeActiveWebsite(request.getAction());
                             break;
 
+                        case "video":
+                            PackageManager.ChangeActivePackage(VRPlayerManager.packageName);
+                            //Change url to a safe link (no ':' otherwise cannot split properly)
+                            String safeLink = request.getAction().replaceAll(":", "|");
+
+                            MainActivity.runOnUIDelay(() -> {
+                                String action = "File path:" + safeLink + ":" + "1" + ":" + "Link";
+                                VRPlayerManager.newIntent(action);
+                            }, 3000);
+                            break;
+
                         case "screenControl":
-                            Log.e(TAG, "Lock/unlock screen: " + request.getAction());
                             if (request.getAction().equals("block")) {
                                 MainActivity.getInstance().startScreenBlockService();
                             } else {
@@ -381,6 +416,14 @@ public class FirebaseService extends Service {
      */
     public static void changeUsername(String newName) {
         database.child(followerRef).child(roomCode).child(uuid).child("name").setValue(newName);
+    }
+
+    /**
+     * Update the android follower entry with the new action receieved from the VR player.
+     * @param newName A String of the new action to be submitted.
+     */
+    public static void changeCurrentAction(String newName) {
+        database.child(followerRef).child(roomCode).child(uuid).child("action").setValue(newName);
     }
 
     public static void uploadFile(String path, byte[] bytes) {

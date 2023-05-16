@@ -4,14 +4,14 @@ import java.util.List;
 
 public class Task {
     public String name;
+    public String link; //either a packageName or website link
     public String type;
-    public String packageName;
     public List<String> tags;
 
-    public Task(String name, String type, String packageName, List<String> tags) {
+    public Task(String name, String link, String type, List<String> tags) {
         this.name = name;
+        this.link = link;
         this.type = type;
-        this.packageName = packageName;
         this.tags = tags;
     }
 }

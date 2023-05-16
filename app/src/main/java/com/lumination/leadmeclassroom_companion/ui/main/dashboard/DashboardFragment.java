@@ -12,17 +12,11 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.lumination.leadmeclassroom_companion.MainActivity;
 import com.lumination.leadmeclassroom_companion.R;
 import com.lumination.leadmeclassroom_companion.databinding.MainPageDashboardBinding;
-import com.lumination.leadmeclassroom_companion.models.Task;
 import com.lumination.leadmeclassroom_companion.ui.main.MainFragment;
 import com.lumination.leadmeclassroom_companion.ui.main.tasks.NoTasksFragment;
 import com.lumination.leadmeclassroom_companion.ui.main.tasks.TaskSelectionFragment;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 public class DashboardFragment extends Fragment {
     public final static String TAG = "DASHBOARD_FRAGMENT";
@@ -53,19 +47,6 @@ public class DashboardFragment extends Fragment {
             Log.e("List Type", listType);
             setupTasks();
         });
-
-        //TODO used for testing
-//        if(Objects.requireNonNull(mViewModel.getPushedPackages().getValue()).size() == 0) {
-//            List<Task> test = new ArrayList<>();
-//            Task task = new Task("Settings", "Media type1", "com.android.settings", null);
-//            Task task2 = new Task("Gallery", "Media type2", "com.miui.gallery", null);
-//            Task task3 = new Task("Compass", "Media type3", "com.miui.compass", null);
-//            test.add(task);
-//            test.add(task2);
-//            test.add(task3);
-//
-//            MainActivity.runOnUIDelay(() -> mViewModel.setPushedPackages(test), 4000);
-//        }
     }
 
     @Nullable
@@ -93,6 +74,12 @@ public class DashboardFragment extends Fragment {
         } else if (mViewModel.getPushedPackages().getValue().size() == 0) {
             childManager.beginTransaction()
                     .replace(R.id.task_container, NoTasksFragment.class, null, NoTasksFragment.TAG)
+                    .commitNow();
+        } else if (mViewModel.getPushedPackages().getValue().size() == 1) {
+            Bundle args = new Bundle();
+            args.putString("type", "carousel");
+            childManager.beginTransaction()
+                    .replace(R.id.task_container, TaskSelectionFragment.class, args, TaskSelectionFragment.TAG)
                     .commitNow();
         } else if (mViewModel.getPackageListType().getValue().equals("list")) {
             Bundle args = new Bundle();
