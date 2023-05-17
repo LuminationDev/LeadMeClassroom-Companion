@@ -8,6 +8,10 @@ public class ClassCodeViewModel extends ViewModel {
     private MutableLiveData<String> loginCode = new MutableLiveData<>();
     private MutableLiveData<String> errorCode = new MutableLiveData<>();
 
+    private MutableLiveData<Boolean> overlayPermission = new MutableLiveData<>();
+    private MutableLiveData<Boolean> usageStatPermission = new MutableLiveData<>();
+    private MutableLiveData<Boolean> storagePermission = new MutableLiveData<>();
+
     /**
      * Reset all data fields within the ViewModel.
      */
@@ -50,5 +54,59 @@ public class ClassCodeViewModel extends ViewModel {
      */
     public void setErrorCode(String newValue) {
         errorCode.setValue(newValue);
+    }
+
+    /**
+     * Return a boolean of whether the overlay permission has been granted or not.
+     */
+    public LiveData<Boolean> getOverlayPermission() {
+        if (overlayPermission == null) {
+            overlayPermission = new MutableLiveData<>();
+        }
+
+        return overlayPermission;
+    }
+
+    /**
+     * Set whether the overlay permission has been granted
+     */
+    public void setOverlayPermission(Boolean newValue) {
+        overlayPermission.setValue(newValue);
+    }
+
+    /**
+     * Return a boolean of whether the usage stat permission has been granted or not.
+     */
+    public LiveData<Boolean> getUsageStatPermission() {
+        if (usageStatPermission == null) {
+            usageStatPermission = new MutableLiveData<>();
+        }
+
+        return usageStatPermission;
+    }
+
+    /**
+     * Set whether the usage stat permission has been granted
+     */
+    public void setUsageStatPermission(Boolean newValue) {
+        usageStatPermission.setValue(newValue);
+    }
+
+    /**
+     * Return a boolean of whether the storage permission has been granted or not.
+     */
+    public LiveData<Boolean> getStoragePermission() {
+        if (storagePermission == null) {
+            storagePermission = new MutableLiveData<>();
+        }
+
+        return storagePermission;
+    }
+
+    /**
+     * Set whether the storage permission has been granted
+     */
+    public void setStoragePermission(Boolean newValue) {
+        storagePermission.setValue(newValue);
     }
 }

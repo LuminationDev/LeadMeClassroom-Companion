@@ -24,5 +24,7 @@
 
     <color name="red_error">#FF3104</color>
 
+    <color name="green_success">#3CB043</color>
+
     <color name="transparent">#00000000</color>
 </resources>

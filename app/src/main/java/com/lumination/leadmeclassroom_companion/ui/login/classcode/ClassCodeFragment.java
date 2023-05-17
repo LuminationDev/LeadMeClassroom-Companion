@@ -18,6 +18,7 @@ import com.alimuzaffar.lib.pin.PinEntryEditText;
 import com.lumination.leadmeclassroom_companion.MainActivity;
 import com.lumination.leadmeclassroom_companion.R;
 import com.lumination.leadmeclassroom_companion.databinding.LoginPageClassCodeBinding;
+import com.lumination.leadmeclassroom_companion.managers.PermissionManager;
 import com.lumination.leadmeclassroom_companion.services.FirebaseService;
 
 public class ClassCodeFragment extends Fragment {
@@ -44,8 +45,31 @@ public class ClassCodeFragment extends Fragment {
         View view = inflater.inflate(R.layout.login_page_class_code, container, false);
         binding = DataBindingUtil.bind(view);
 
+        setupPermissionButtons(view);
+        setupTextInput(view);
+
+        return view;
+    }
+
+    /**
+     * Create listeners for the button images used to navigate to the required permissions
+     */
+    private void setupPermissionButtons(View view) {
+        view.findViewById(R.id.usage_permission).setOnClickListener(v -> PermissionManager.askForUsageStatPermission());
+
+        view.findViewById(R.id.overlay_permission).setOnClickListener(v -> PermissionManager.askForOverlayPermission());
+
+        view.findViewById(R.id.storage_permission).setOnClickListener(v -> PermissionManager.askForStoragePermission());
+    }
+
+    /**
+     * Setup a text watcher to update the view model whenever a character is entered and create a
+     * listener to submit the code to firebase.
+     */
+    private void setupTextInput(View view) {
         //Track as the code is input into the pin entry area
         PinEntryEditText text = view.findViewById(R.id.room_code);
+
         text.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -67,8 +91,6 @@ public class ClassCodeFragment extends Fragment {
                 Log.e(TAG, ex.toString());
             }
         });
-
-        return view;
     }
 
     /**

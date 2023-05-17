@@ -139,8 +139,7 @@ public class PackageManager {
         String safeLink = link.replaceAll(":", "|");
 
         MainActivity.runOnUIDelay(() -> {
-            String action = "File path:" + safeLink + ":" + "1" + ":" + "Link";
-            VRPlayerManager.newIntent(action);
+            VRPlayerManager.determineMediaType(safeLink, "1", "Link");
         }, 3000);
     }
 

@@ -2,15 +2,68 @@ package com.lumination.leadmeclassroom_companion.vrplayer;
 
 import android.content.ComponentName;
 import android.content.Intent;
+import android.net.Uri;
 
 import com.lumination.leadmeclassroom_companion.MainActivity;
+import com.lumination.leadmeclassroom_companion.models.Video;
+import com.lumination.leadmeclassroom_companion.ui.main.dashboard.DashboardFragment;
+
+import java.util.Optional;
 
 public class VRPlayerManager {
     public final static String packageName = "com.lumination.VRPlayer";
     private final static String className = "com.lumination.receiver.ReceiverPlugin";
 
+    /**
+     * Determine what type of media the VR player has to load, this will be either a Link or a URI.
+     * @param path A url or name of the video location or name to play
+     * @param startTime A string of the time to start the video at
+     * @param mediaType A string describing how to treat the action
+     */
+    public static void determineMediaType(String path, String startTime, String mediaType) {
+        switch(mediaType) {
+            case "Link":
+                newIntent("File path:" + path + ":" + startTime + ":" + mediaType);
+                break;
+            case "Video":
+                String filePath = findLocalVideo(path);
+                if(filePath != null) {
+                    newIntent("File path:" + filePath + ":" + startTime + ":" + mediaType);
+                }
+                break;
+        }
+    }
+
+    /**
+     * Based on the supplied name, find the local video and attempt to load it through the VR player.
+     */
+    private static String findLocalVideo(String name) {
+        if(DashboardFragment.mViewModel.getLocalVideos().getValue() != null) {
+            Optional<Video> videoOptional = DashboardFragment.mViewModel.getLocalVideos().getValue()
+                    .stream()
+                    .filter(video -> video.getName().equals(name))
+                    .findFirst();
+
+            if (videoOptional.isPresent()) {
+                Video video = videoOptional.get();
+                return video.getFilePath();
+            }
+        }
+
+        // Video not found
+        return null;
+    }
+
+    /**
+     * Send a controlling action to the VR player, this may be stop, play or pause for example.
+     * @param videoAction A string detailing what VR player's internal video player should do.
+     */
+    public static void videoAction(String videoAction) {
+        newIntent(videoAction);
+    }
+
     //Create an intent based on the action supplied and send it to the external application
-    public static void newIntent(String action) {
+    private static void newIntent(String action) {
         // sendIntent is the object that will be broadcast outside our app
         Intent sendIntent = new Intent();
 

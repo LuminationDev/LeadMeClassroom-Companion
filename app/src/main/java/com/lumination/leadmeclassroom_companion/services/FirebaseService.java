@@ -28,6 +28,7 @@ import com.lumination.leadmeclassroom_companion.managers.PackageManager;
 import com.lumination.leadmeclassroom_companion.models.Learner;
 import com.lumination.leadmeclassroom_companion.models.Request;
 import com.lumination.leadmeclassroom_companion.models.Task;
+import com.lumination.leadmeclassroom_companion.models.Video;
 import com.lumination.leadmeclassroom_companion.ui.login.LoginFragment;
 import com.lumination.leadmeclassroom_companion.ui.login.classcode.ClassCodeFragment;
 import com.lumination.leadmeclassroom_companion.ui.login.username.UsernameFragment;
@@ -37,6 +38,7 @@ import com.lumination.leadmeclassroom_companion.vrplayer.VRPlayerManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -215,11 +217,22 @@ public class FirebaseService extends Service {
      */
     public static void addFollower(String username) {
         MainActivity.getInstance().startLeadMeService();
+        MainActivity.getInstance().startPixelService();
         MainActivity.getInstance().registerBroadcastReceiver();
 
+        //Get a firebase friendly version of the local videos
+        List<Map<String, Object>> videos = new ArrayList<>();
+        if(DashboardFragment.mViewModel.getLocalVideos().getValue() != null) {
+            videos = DashboardFragment.mViewModel.getLocalVideos()
+                    .getValue()
+                    .stream()
+                    .map(Video::getVideoInfo)
+                    .collect(Collectors.toList());
+        }
+
         //Create an entry in firebase for the new Android user
-        Learner test = new Learner(username, roomCode, DashboardFragment.mViewModel.getInstalledPackages().getValue());
-        database.child(followerRef).child(roomCode).child(uuid).setValue(test);
+        Learner follower = new Learner(username, roomCode, DashboardFragment.mViewModel.getInstalledPackages().getValue(), videos);
+        database.child(followerRef).child(roomCode).child(uuid).setValue(follower);
 
         //Listen for remote name changes
         nameReference = database.child(followerRef).child(roomCode).child(uuid).child("name");
@@ -322,15 +335,20 @@ public class FirebaseService extends Service {
                             PackageManager.ChangeActiveWebsite(request.getAction());
                             break;
 
-                        case "video":
+                        case "video_link":
                             PackageManager.ChangeActivePackage(VRPlayerManager.packageName);
                             //Change url to a safe link (no ':' otherwise cannot split properly)
                             String safeLink = request.getAction().replaceAll(":", "|");
+                            MainActivity.runOnUIDelay(() -> VRPlayerManager.determineMediaType(safeLink, "1", "Link"), 3000);
+                            break;
 
-                            MainActivity.runOnUIDelay(() -> {
-                                String action = "File path:" + safeLink + ":" + "1" + ":" + "Link";
-                                VRPlayerManager.newIntent(action);
-                            }, 3000);
+                        case "video_local":
+                            PackageManager.ChangeActivePackage(VRPlayerManager.packageName);
+                            MainActivity.runOnUIDelay(() -> VRPlayerManager.determineMediaType(request.getAction(), "1", "Video"), 3000);
+                            break;
+
+                        case "video_action":
+                            VRPlayerManager.videoAction(request.getAction());
                             break;
 
                         case "screenControl":
@@ -419,11 +437,12 @@ public class FirebaseService extends Service {
     }
 
     /**
-     * Update the android follower entry with the new action receieved from the VR player.
-     * @param newName A String of the new action to be submitted.
+     * Update the android follower entry with the new attribute received from the VR player.
+     * @param attribute A String of the type of information to be submitted.
+     * @param info A String of the new information to be submitted.
      */
-    public static void changeCurrentAction(String newName) {
-        database.child(followerRef).child(roomCode).child(uuid).child("action").setValue(newName);
+    public static void changeVideoStatus(String attribute, String info) {
+        database.child(followerRef).child(roomCode).child(uuid).child(attribute).setValue(info);
     }
 
     public static void uploadFile(String path, byte[] bytes) {

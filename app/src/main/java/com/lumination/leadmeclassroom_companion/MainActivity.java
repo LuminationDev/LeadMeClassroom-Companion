@@ -1,24 +1,26 @@
 package com.lumination.leadmeclassroom_companion;
 
-import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.media.AudioManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.lumination.leadmeclassroom_companion.managers.PermissionManager;
 import com.lumination.leadmeclassroom_companion.models.Application;
 import com.lumination.leadmeclassroom_companion.services.FirebaseService;
 import com.lumination.leadmeclassroom_companion.services.LeadMeService;
@@ -30,12 +32,13 @@ import com.lumination.leadmeclassroom_companion.ui.login.classcode.ClassCodeView
 import com.lumination.leadmeclassroom_companion.ui.main.dashboard.DashboardFragment;
 import com.lumination.leadmeclassroom_companion.ui.main.dashboard.DashboardViewModel;
 import com.lumination.leadmeclassroom_companion.utilities.Constants;
+import com.lumination.leadmeclassroom_companion.utilities.MediaHelpers;
 import com.lumination.leadmeclassroom_companion.vrplayer.VRPlayerBroadcastReceiver;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
     private static MainActivity instance;
     public static MainActivity getInstance() { return instance; }
 
@@ -63,26 +66,29 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
 
         hideAndroidBars();
 
         startFirebaseService();
-        startPixelService();
         preloadViewModels();
 
         if (savedInstanceState == null) {
             setupFragmentManager();
         }
 
-        //Load up the installed packages
-        collectInstalledPackages();
-
-        checkForUsageStatPermission();
-        checkForOverlayPermission();
-
         instance = this;
+
+        PermissionManager.checkForPermissions();
+        //Load up the installed packages and video files
+        collectInstalledPackages();
+        MediaHelpers.collectVideoFiles();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        PermissionManager.checkForPermissions();
     }
 
     @Override
@@ -93,6 +99,27 @@ public class MainActivity extends AppCompatActivity {
 
         if(vrBroadcastReceiver != null) {
             unregisterReceiver(vrBroadcastReceiver);
+        }
+    }
+
+    // This function is called when user accept or decline the permission.
+    // Request Code is used to check which permission called this function.
+    // This request code is provided when user is prompt for permission.
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == PermissionManager.STORAGE_PERMISSION_CODE) {
+            boolean granted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+            ClassCodeFragment.mViewModel.setStoragePermission(granted);
+            
+            if (granted) {
+                Toast.makeText(this, "Storage Permission Granted", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Storage Permission Denied", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -114,40 +141,6 @@ public class MainActivity extends AppCompatActivity {
                     WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             );
         }
-    }
-
-    /**
-     * Check if the PACKAGE_USAGE_STATS permission has been granted for this application. Prompt the
-     * user to accept them if not.
-     */
-    private void checkForUsageStatPermission() {
-        Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
-
-        AppOpsManager appOpsManager = (AppOpsManager) getSystemService(Context.APP_OPS_SERVICE);
-        int mode = appOpsManager.unsafeCheckOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, android.os.Process.myUid(), getPackageName());
-        boolean granted = mode == AppOpsManager.MODE_ALLOWED;
-
-        if (granted) {
-            checkForOverlayPermission();
-            return;
-        }
-
-        startActivity(intent);
-    }
-
-    /**
-     * Check if the ACTION_MANAGE_OVERLAY_PERMISSION permission has been granted for this application.
-     * Prompt the user to accept them if not.
-     */
-    private void checkForOverlayPermission() {
-        if (Settings.canDrawOverlays(this)) {
-            return;
-        }
-
-        // The user has not granted permission yet, so ask for it
-        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-        intent.setData(Uri.parse("package:" + getPackageName()));
-        startActivity(intent);
     }
 
     /**

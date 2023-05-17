@@ -17,4 +17,8 @@
     <string name="library">Library</string>
     <string name="change_name">Change name</string>
     <string name="logout">Logout</string>
+    <string name="enable_permissions">Please enable the permissions below</string>
+    <string name="overlay_permission">Overlay</string>
+    <string name="usage_stats_permission">Usage Stats</string>
+    <string name="storage_permission">Storage</string>
 </resources>
