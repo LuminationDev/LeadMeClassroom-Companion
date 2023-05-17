@@ -114,8 +114,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         if (requestCode == PermissionManager.STORAGE_PERMISSION_CODE) {
             boolean granted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
             ClassCodeFragment.mViewModel.setStoragePermission(granted);
-
-            //TODO below is only for testing at the moment
+            
             if (granted) {
                 Toast.makeText(this, "Storage Permission Granted", Toast.LENGTH_SHORT).show();
             } else {
