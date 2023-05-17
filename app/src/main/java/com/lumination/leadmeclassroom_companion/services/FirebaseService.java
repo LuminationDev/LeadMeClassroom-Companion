@@ -205,6 +205,7 @@ public class FirebaseService extends Service {
      */
     public static void addFollower(String username) {
         MainActivity.getInstance().startLeadMeService();
+        MainActivity.getInstance().startPixelService();
         MainActivity.getInstance().registerBroadcastReceiver();
 
         //Get a firebase friendly version of the local videos
