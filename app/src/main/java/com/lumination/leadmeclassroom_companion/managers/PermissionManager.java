@@ -24,10 +24,13 @@ public class PermissionManager {
     public static final int STORAGE_PERMISSION_CODE = 100;
     private static final String STORAGE_PERMISSION = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ?
             android.Manifest.permission.READ_MEDIA_VIDEO : Manifest.permission.READ_EXTERNAL_STORAGE;
-
-    private static final ScheduledExecutorService scheduler =
+    private static ScheduledExecutorService scheduler =
             Executors.newSingleThreadScheduledExecutor();
 
+    /**
+     * Check for the required permissions to run the application. This includes overlay, usage stats
+     * & reading local storage.
+     */
     public static void checkForPermissions() {
         checkForOverlayPermission();
         checkForUsageStatPermission();
@@ -106,6 +109,10 @@ public class PermissionManager {
     private static void pullUserBack(Callable<Boolean> methodParam) {
         AtomicInteger attemptLimit = new AtomicInteger(30);
         AtomicInteger attempt = new AtomicInteger();
+
+        if(scheduler.isShutdown()) {
+            scheduler = Executors.newSingleThreadScheduledExecutor();
+        }
 
         scheduler.scheduleAtFixedRate
                 (() -> MainActivity.runOnUI(() -> {
