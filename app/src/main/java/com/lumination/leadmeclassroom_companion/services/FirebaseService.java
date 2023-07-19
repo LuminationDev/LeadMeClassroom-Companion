@@ -21,6 +21,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.lumination.leadmeclassroom_companion.MainActivity;
 import com.lumination.leadmeclassroom_companion.R;
@@ -446,6 +447,11 @@ public class FirebaseService extends Service {
     }
 
     public static void uploadFile(String path, byte[] bytes) {
-        storage.child("app_icons").child(path).putBytes(bytes);
+        StorageReference appIconRef = storage.child("app_icons").child(path);
+        appIconRef.putBytes(bytes);
+        StorageMetadata metadata = new StorageMetadata.Builder()
+                .setCacheControl("public, max-age=604800, s-maxage=6048000")
+                .build();
+        appIconRef.updateMetadata(metadata);
     }
 }
