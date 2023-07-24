@@ -134,7 +134,7 @@ public class PackageManager {
      * @param source A string of the URL/local video name to load in the video player.
      * @param isLink A boolean of if the supplied source is a URL.
      */
-    public static void ChangeActiveVideoURL(String source, boolean isLink) {
+    public static void ChangeActiveVideo(String source, boolean isLink) {
         PackageManager.ChangeActivePackage(VRPlayerManager.packageName);
 
         MainActivity.runOnUIDelay(() -> {
@@ -157,7 +157,7 @@ public class PackageManager {
                 break;
             case "Video":
             case "Video_local":
-                ChangeActiveVideoURL(value, mediaType.equals("Video"));
+                ChangeActiveVideo(value, mediaType.equals("Video"));
                 break;
         }
     }
