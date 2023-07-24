@@ -10,6 +10,9 @@ import android.widget.ImageView;
 import com.lumination.leadmeclassroom_companion.MainActivity;
 import com.lumination.leadmeclassroom_companion.vrplayer.VRPlayerManager;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 public class TaskHelpers {
     /**
      * Depending on the media type find and set a corresponding icon.
@@ -26,6 +29,7 @@ public class TaskHelpers {
                 setDefaultWebsiteIcon(imageView);
                 break;
             case "Video":
+            case "Video_local":
                 setVRPlayerIcon(imageView);
                 break;
         }
@@ -69,6 +73,22 @@ public class TaskHelpers {
         catch (Exception e)
         {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Get the domain name of a website from a supplied link.
+     * @param urlString A string that is the URL attempting to find a domain name for.
+     * @return A string of the domain name.
+     */
+    public static String getWebsiteNameFromUrl(String urlString) {
+        try {
+            URL url = new URL(urlString);
+            String host = url.getHost();
+            return host.startsWith("www.") ? host.substring(4) : host;
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 

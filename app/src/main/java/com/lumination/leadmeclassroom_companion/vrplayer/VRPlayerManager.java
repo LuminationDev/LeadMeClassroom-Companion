@@ -2,7 +2,6 @@ package com.lumination.leadmeclassroom_companion.vrplayer;
 
 import android.content.ComponentName;
 import android.content.Intent;
-import android.net.Uri;
 
 import com.lumination.leadmeclassroom_companion.MainActivity;
 import com.lumination.leadmeclassroom_companion.models.Video;
@@ -23,12 +22,12 @@ public class VRPlayerManager {
     public static void determineMediaType(String path, String startTime, String mediaType) {
         switch(mediaType) {
             case "Link":
-                newIntent("File path:" + path + ":" + startTime + ":" + mediaType);
+                newIntent("File path:" + startTime + ":" + mediaType + ":" + path);
                 break;
             case "Video":
                 String filePath = findLocalVideo(path);
                 if(filePath != null) {
-                    newIntent("File path:" + filePath + ":" + startTime + ":" + mediaType);
+                    newIntent("File path:" + startTime + ":" + mediaType + ":" + filePath);
                 }
                 break;
         }

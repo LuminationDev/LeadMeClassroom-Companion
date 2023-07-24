@@ -42,7 +42,7 @@
                     android:layout_marginBottom="10dp"
                     android:textColor="@color/black"
                     android:textSize="11sp"
-                    android:text="@{task.type, default=`Media Type`}"/>
+                    android:text="@{task.displayType, default=`Media Type`}"/>
 
                 <TextView
                     android:layout_width="wrap_content"

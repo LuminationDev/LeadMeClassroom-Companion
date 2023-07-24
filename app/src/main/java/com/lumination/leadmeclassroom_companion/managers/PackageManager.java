@@ -131,15 +131,14 @@ public class PackageManager {
 
     /**
      * Open the VR player, after an initial 3 seconds delay send through the source link.
-     * @param link A string of the URL to load in the video player.
+     * @param source A string of the URL/local video name to load in the video player.
+     * @param isLink A boolean of if the supplied source is a URL.
      */
-    public static void ChangeActiveVideo(String link) {
+    public static void ChangeActiveVideoURL(String source, boolean isLink) {
         PackageManager.ChangeActivePackage(VRPlayerManager.packageName);
-        //Change url to a safe link (no ':' otherwise cannot split properly)
-        String safeLink = link.replaceAll(":", "|");
 
         MainActivity.runOnUIDelay(() -> {
-            VRPlayerManager.determineMediaType(safeLink, "1", "Link");
+            VRPlayerManager.determineMediaType(source, "1", isLink ? "Link" : "Video");
         }, 3000);
     }
 
@@ -157,7 +156,8 @@ public class PackageManager {
                 ChangeActiveWebsite(value);
                 break;
             case "Video":
-                ChangeActiveVideo(value);
+            case "Video_local":
+                ChangeActiveVideoURL(value, mediaType.equals("Video"));
                 break;
         }
     }
