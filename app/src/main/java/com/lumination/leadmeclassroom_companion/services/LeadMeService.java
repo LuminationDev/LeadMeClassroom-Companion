@@ -20,6 +20,7 @@ import androidx.core.app.NotificationCompat;
 import com.lumination.leadmeclassroom_companion.MainActivity;
 import com.lumination.leadmeclassroom_companion.R;
 import com.lumination.leadmeclassroom_companion.managers.PackageManager;
+import com.lumination.leadmeclassroom_companion.ui.main.dashboard.DashboardFragment;
 import com.lumination.leadmeclassroom_companion.utilities.Constants;
 
 import java.util.List;
@@ -158,11 +159,13 @@ public class LeadMeService extends Service {
      * the previously recorded one, update the entry on firebase.
      */
     private void CheckAppActivity() {
-        List<UsageStats> usageStatsList = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_BEST, 0, System.currentTimeMillis());
+        List<UsageStats> usageStatsList = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_BEST, System.currentTimeMillis() - (10 * 1000), System.currentTimeMillis());
 
         UsageStats lastUsedApp = null;
         for (UsageStats usageStats : usageStatsList) {
-            if (lastUsedApp == null || usageStats.getLastTimeUsed() > lastUsedApp.getLastTimeUsed()) {
+            if (lastUsedApp == null ||
+                    ((usageStats.getLastTimeUsed() > lastUsedApp.getLastTimeUsed())
+                            && Objects.requireNonNull(DashboardFragment.mViewModel.getInstalledPackages().getValue()).stream().anyMatch(application -> application.packageName.equals(usageStats.getPackageName())))) {
                 lastUsedApp = usageStats;
             }
         }
