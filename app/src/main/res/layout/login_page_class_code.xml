@@ -29,12 +29,21 @@
             app:alignItems="center">
 
             <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:textColor="@color/red_error"
+                android:visibility="@{login.errorCode.length > 0 ? View.VISIBLE : View.GONE}"
+                android:text="@{login.errorCode}" />
+
+            <TextView
                 android:id="@+id/message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
                 android:textFontWeight="700"
                 android:textColor="@color/white"
+                android:visibility="@{login.errorCode.length > 0 ? View.GONE : View.VISIBLE}"
                 android:text="@string/room_code" />
 
             <com.alimuzaffar.lib.pin.PinEntryEditText
@@ -62,6 +71,7 @@
                 android:id="@+id/submit_room_code"
                 android:layout_width="228dp"
                 android:layout_height="66dp"
+                android:layout_marginBottom="20dp"
                 android:elevation="0dp"
                 android:letterSpacing="0"
                 android:stateListAnimator="@null"
@@ -73,14 +83,6 @@
                 app:cornerRadius="10dp"
                 app:layout_flexShrink="0"
                 app:rippleColor="@color/grey" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:textColor="@color/red_error"
-                android:visibility="@{login.errorCode.length > 0 ? View.VISIBLE : View.INVISIBLE}"
-                android:text="@{login.errorCode}" />
         </com.google.android.flexbox.FlexboxLayout>
 
         <com.google.android.flexbox.FlexboxLayout
