@@ -32,12 +32,13 @@ import com.lumination.leadmeclassroom_companion.ui.login.classcode.ClassCodeView
 import com.lumination.leadmeclassroom_companion.ui.main.dashboard.DashboardFragment;
 import com.lumination.leadmeclassroom_companion.ui.main.dashboard.DashboardViewModel;
 import com.lumination.leadmeclassroom_companion.utilities.Constants;
+import com.lumination.leadmeclassroom_companion.utilities.NetworkHelpers;
 import com.lumination.leadmeclassroom_companion.vrplayer.VRPlayerBroadcastReceiver;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
+public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, NetworkHelpers.NetworkStateListener, NetworkHelpers.WebsiteReachabilityListener {
     private static MainActivity instance;
     public static MainActivity getInstance() { return instance; }
 
@@ -72,6 +73,10 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         startFirebaseService();
         preloadViewModels();
 
+        // Check network & database availability
+        NetworkHelpers.checkNetworkAvailability(this, this);
+        NetworkHelpers.checkWebsiteReachability("https://console.firebase.google.com/u/0/project/browserextension-bc94e/database/browserextension-bc94e-default-rtdb/data/~2F", this);
+
         if (savedInstanceState == null) {
             setupFragmentManager();
         }
@@ -79,6 +84,32 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         instance = this;
 
         PermissionManager.checkForPermissions();
+    }
+
+    @Override
+    public void onNetworkAvailable() {
+        runOnUI(() -> ClassCodeFragment.mViewModel.setDatabaseConnection(true));
+    }
+
+    @Override
+    public void onNetworkUnavailable() {
+        runOnUI(() -> {
+            ClassCodeFragment.mViewModel.setDatabaseConnection(false);
+            Toast.makeText(this, "No internet connection!", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    @Override
+    public void onWebsiteReachable() {
+        runOnUI(() -> ClassCodeFragment.mViewModel.setInternetConnection(true));
+    }
+
+    @Override
+    public void onWebsiteUnreachable() {
+        runOnUI(() -> {
+            ClassCodeFragment.mViewModel.setInternetConnection(false);
+            Toast.makeText(this, "Database is unreachable!", Toast.LENGTH_SHORT).show();
+        });
     }
 
     @Override

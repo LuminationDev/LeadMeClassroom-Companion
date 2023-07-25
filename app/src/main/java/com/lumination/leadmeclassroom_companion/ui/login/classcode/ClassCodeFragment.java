@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -45,10 +47,23 @@ public class ClassCodeFragment extends Fragment {
         View view = inflater.inflate(R.layout.login_page_class_code, container, false);
         binding = DataBindingUtil.bind(view);
 
+        setupConnectionIcons(view);
         setupPermissionButtons(view);
         setupTextInput(view);
 
         return view;
+    }
+
+    /**
+     * Start the spinner animation, displaying to users that something is happening while they wait.
+     */
+    private void setupConnectionIcons(View view) {
+        Animation animation;
+        animation = AnimationUtils.loadAnimation(MainActivity.getInstance().getApplicationContext(),
+                R.anim.spinner_rotation);
+
+        view.findViewById(R.id.internet_spinner).startAnimation(animation);
+        view.findViewById(R.id.database_spinner).startAnimation(animation);
     }
 
     /**

@@ -12,6 +12,9 @@ public class ClassCodeViewModel extends ViewModel {
     private MutableLiveData<Boolean> usageStatPermission = new MutableLiveData<>();
     private MutableLiveData<Boolean> storagePermission = new MutableLiveData<>();
 
+    private MutableLiveData<Boolean> internetConnection = new MutableLiveData<>(null);
+    private MutableLiveData<Boolean> databaseConnection = new MutableLiveData<>(null);
+
     /**
      * Reset all data fields within the ViewModel.
      */
@@ -108,5 +111,41 @@ public class ClassCodeViewModel extends ViewModel {
      */
     public void setStoragePermission(Boolean newValue) {
         storagePermission.setValue(newValue);
+    }
+
+    /**
+     * Return a boolean of whether there is an active internet connection or not.
+     */
+    public LiveData<Boolean> getInternetConnection() {
+        if (internetConnection == null) {
+            internetConnection = new MutableLiveData<>();
+        }
+
+        return internetConnection;
+    }
+
+    /**
+     * Set whether the internet connection has been established
+     */
+    public void setInternetConnection(Boolean newValue) {
+        internetConnection.setValue(newValue);
+    }
+
+    /**
+     * Return a boolean of whether there is a database connection or not.
+     */
+    public LiveData<Boolean> getDatabaseConnection() {
+        if (databaseConnection == null) {
+            databaseConnection = new MutableLiveData<>();
+        }
+
+        return databaseConnection;
+    }
+
+    /**
+     * Set whether a connection to the database can be established
+     */
+    public void setDatabaseConnection(Boolean newValue) {
+        databaseConnection.setValue(newValue);
     }
 }

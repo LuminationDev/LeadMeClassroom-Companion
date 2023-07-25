@@ -50,7 +50,7 @@
                 android:cursorVisible="false"
                 android:layoutDirection="ltr"
                 android:text="@{login.loginCode}"
-                android:enabled="@{login.overlayPermission &amp;&amp; login.usageStatPermission &amp;&amp; login.storagePermission}"
+                android:enabled="@{login.overlayPermission &amp;&amp; login.usageStatPermission &amp;&amp; login.storagePermission &amp;&amp; login.internetConnection &amp;&amp; login.databaseConnection}"
                 app:pinBackgroundDrawable="@drawable/background_pin_input"
                 app:pinBackgroundIsSquare="false"
                 app:pinLineColors="@color/black"
@@ -86,7 +86,7 @@
         <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="@{(login.overlayPermission &amp;&amp; login.usageStatPermission &amp;&amp; login.storagePermission) ? View.GONE : View.VISIBLE}"
+            android:visibility="@{(login.overlayPermission &amp;&amp; login.usageStatPermission &amp;&amp; login.storagePermission) || (login.internetConnection &amp;&amp; login.databaseConnection) ? View.GONE : View.VISIBLE}"
             app:flexDirection="column">
 
             <TextView
@@ -185,6 +185,111 @@
                         android:textSize="11sp"
                         android:textColor="@color/white"
                         android:text="@string/storage_permission"
+                        android:textAlignment="center"/>
+                </com.google.android.flexbox.FlexboxLayout>
+            </com.google.android.flexbox.FlexboxLayout>
+        </com.google.android.flexbox.FlexboxLayout>
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="@{(login.internetConnection &amp;&amp; login.databaseConnection) ? View.GONE : View.VISIBLE}"
+            app:flexDirection="column">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:textFontWeight="700"
+                android:textColor="@color/white"
+                android:text="Internet or database connection not available"
+                android:textAlignment="center"/>
+
+            <com.google.android.flexbox.FlexboxLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:flexDirection="row"
+                app:justifyContent="space_around">
+
+                <com.google.android.flexbox.FlexboxLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:flexDirection="column"
+                    app:alignItems="center">
+
+                    <ImageView
+                        android:id="@+id/internet_spinner"
+                        android:visibility="@{login.internetConnection == null ? View.VISIBLE : View.GONE}"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="11dp"
+                        android:src="@drawable/icon_spinner"
+                        android:layout_centerInParent="true"
+                        android:animation="@anim/spinner_rotation"
+                        android:contentDescription="loading spinner" />
+
+                    <com.google.android.material.button.MaterialButton
+                        style="@style/Widget.MaterialComponents.Button.Icon"
+                        android:id="@+id/internet_connection"
+                        android:layout_width="50dp"
+                        android:layout_height="match_parent"
+                        android:enabled="@{false}"
+                        android:visibility="@{login.internetConnection == null ? View.GONE : View.VISIBLE}"
+                        app:backgroundTint="@color/navy"
+                        app:iconSize="50dp"
+                        app:iconPadding="-5dp"
+                        app:icon="@{login.internetConnection ? @drawable/icon_correct_success_tick : @drawable/icon_error}"
+                        app:iconGravity="textStart"
+                        app:iconTint="@{login.internetConnection ? @color/green_success : @color/red_error}"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="11sp"
+                        android:textColor="@color/white"
+                        android:text="Internet"
+                        android:textAlignment="center"/>
+                </com.google.android.flexbox.FlexboxLayout>
+
+                <com.google.android.flexbox.FlexboxLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:flexDirection="column"
+                    app:alignItems="center">
+
+                    <ImageView
+                        android:id="@+id/database_spinner"
+                        android:visibility="@{login.databaseConnection == null ? View.VISIBLE : View.GONE}"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="11dp"
+                        android:src="@drawable/icon_spinner"
+                        android:layout_centerInParent="true"
+                        android:animation="@anim/spinner_rotation"
+                        android:contentDescription="loading spinner" />
+
+                    <com.google.android.material.button.MaterialButton
+                        style="@style/Widget.MaterialComponents.Button.Icon"
+                        android:id="@+id/database_connection"
+                        android:layout_width="50dp"
+                        android:layout_height="match_parent"
+                        android:enabled="@{false}"
+                        android:visibility="@{login.databaseConnection == null ? View.GONE : View.VISIBLE}"
+                        app:backgroundTint="@color/navy"
+                        app:iconSize="50dp"
+                        app:iconPadding="-5dp"
+                        app:icon="@{login.databaseConnection ? @drawable/icon_correct_success_tick : @drawable/icon_error}"
+                        app:iconGravity="textStart"
+                        app:iconTint="@{login.databaseConnection ? @color/green_success : @color/red_error}"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="11sp"
+                        android:textColor="@color/white"
+                        android:text="Database"
                         android:textAlignment="center"/>
                 </com.google.android.flexbox.FlexboxLayout>
             </com.google.android.flexbox.FlexboxLayout>
