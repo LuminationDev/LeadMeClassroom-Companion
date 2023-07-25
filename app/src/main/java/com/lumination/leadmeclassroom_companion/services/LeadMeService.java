@@ -100,7 +100,7 @@ public class LeadMeService extends Service {
                     Log.e(TAG, e.toString());
                 }
             } else if(action.equals(Constants.ACTION_DISCONNECT)) {
-                MainActivity.getInstance().logout();
+                MainActivity.getInstance().logout(false);
             }
         }
     }

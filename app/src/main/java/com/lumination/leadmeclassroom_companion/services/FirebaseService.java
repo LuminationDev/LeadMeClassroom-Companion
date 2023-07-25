@@ -366,7 +366,7 @@ public class FirebaseService extends Service {
 
                         case "end_session":
                         case "removedByLeader":
-                            MainActivity.getInstance().logout();
+                            MainActivity.getInstance().logout(false);
                             break;
 
                         default:
@@ -446,6 +446,12 @@ public class FirebaseService extends Service {
         database.child(followerRef).child(roomCode).child(uuid).child(attribute).setValue(info);
     }
 
+    /**
+     * Upload an application ICON to firebase for use by the Leader. This function only triggers if
+     * there is a missing ICON when the applications are correlated within a Leader's classroom.
+     * @param path A string of the ICON's name.
+     * @param bytes A byte array of the icon.
+     */
     public static void uploadFile(String path, byte[] bytes) {
         StorageReference appIconRef = storage.child("app_icons").child(path);
         appIconRef.putBytes(bytes);
