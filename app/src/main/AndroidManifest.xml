@@ -77,7 +77,7 @@
             android:enabled="true"
             android:name=".services.FirebaseService"
             android:foregroundServiceType="dataSync"
-            android:stopWithTask="true"/>
+            android:stopWithTask="false"/>
 
         <service
             android:enabled="true"

@@ -192,6 +192,15 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     }
 
     /**
+     * Stop the Firebase service, this will send the disconnect command to the leader if there is an
+     * active class.
+     */
+    public void stopFirebaseService() {
+        Intent network_intent = new Intent(getApplicationContext(), FirebaseService.class);
+        stopService(network_intent);
+    }
+
+    /**
      * Start the Pixel service
      */
     public void startPixelService() {
@@ -275,8 +284,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
      * return to the login screen.
      */
     public void logout() {
-        // Remove from firebase
-        FirebaseService.removeFollower();
+        // Stop firebase service and remove from class
+        stopFirebaseService();
 
         // Reset view models
         clearViewModels();
@@ -284,13 +293,12 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         // Return to the class code screen - attempt to pop the entire back stack
         try {
             fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, LoginFragment.class, null)
+                    .commitNow();
         }
         catch (Exception e) {
             Log.e("LOGOUT", e.toString());
         }
-
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, LoginFragment.class, null)
-                .commitNow();
     }
 }
