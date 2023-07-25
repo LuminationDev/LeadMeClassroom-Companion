@@ -21,6 +21,7 @@ import com.lumination.leadmeclassroom_companion.databinding.LoginPageUsernameBin
 import com.lumination.leadmeclassroom_companion.services.FirebaseService;
 import com.lumination.leadmeclassroom_companion.ui.main.MainFragment;
 import com.lumination.leadmeclassroom_companion.ui.main.dashboard.DashboardFragment;
+import com.lumination.leadmeclassroom_companion.utilities.MediaHelpers;
 
 public class UsernameFragment extends Fragment {
     public final static String TAG = "USERNAME_FRAGMENT";
@@ -93,7 +94,9 @@ public class UsernameFragment extends Fragment {
      * to be used for the rest of the application's life cycle.
      */
     private void AddUserToFirebase() {
-        //TODO validate user against name list?
+        //Load applications and videos here
+        MainActivity.getInstance().collectInstalledPackages();
+        MediaHelpers.collectVideoFiles();
 
         FirebaseService.addFollower(DashboardFragment.mViewModel.getUsername().getValue());
 

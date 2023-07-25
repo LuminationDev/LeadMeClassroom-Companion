@@ -32,7 +32,6 @@ import com.lumination.leadmeclassroom_companion.ui.login.classcode.ClassCodeView
 import com.lumination.leadmeclassroom_companion.ui.main.dashboard.DashboardFragment;
 import com.lumination.leadmeclassroom_companion.ui.main.dashboard.DashboardViewModel;
 import com.lumination.leadmeclassroom_companion.utilities.Constants;
-import com.lumination.leadmeclassroom_companion.utilities.MediaHelpers;
 import com.lumination.leadmeclassroom_companion.vrplayer.VRPlayerBroadcastReceiver;
 
 import java.util.List;
@@ -80,9 +79,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         instance = this;
 
         PermissionManager.checkForPermissions();
-        //Load up the installed packages and video files
-        collectInstalledPackages();
-        MediaHelpers.collectVideoFiles();
     }
 
     @Override
@@ -95,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     protected void onDestroy() {
         super.onDestroy();
 
-        logout();
+        logout(true);
 
         if(vrBroadcastReceiver != null) {
             unregisterReceiver(vrBroadcastReceiver);
@@ -240,7 +236,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
      * Query the device for the currently installed packages. Extract the packages names so they
      * can be sent to the teacher.
      */
-    private void collectInstalledPackages() {
+    public void collectInstalledPackages() {
         Intent intent = new Intent(Intent.ACTION_MAIN, null);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
         List<ResolveInfo> rawAppList = getApplicationContext()
@@ -283,7 +279,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
      * Remove the user from the Firebase collection, reset all view model data fields and then
      * return to the login screen.
      */
-    public void logout() {
+    public void logout(boolean isDestroying) {
         // Stop firebase service and remove from class
         stopFirebaseService();
 
@@ -299,6 +295,11 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         }
         catch (Exception e) {
             Log.e("LOGOUT", e.toString());
+        }
+
+        //Restart the firebase for the next session, except if the application is exiting
+        if(!isDestroying) {
+            startFirebaseService();
         }
     }
 }

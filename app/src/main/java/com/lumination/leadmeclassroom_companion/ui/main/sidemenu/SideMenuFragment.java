@@ -43,7 +43,7 @@ public class SideMenuFragment extends Fragment {
 
         //Log the student out
         view.findViewById(R.id.logout).setOnClickListener(v ->
-                MainActivity.runOnUIDelay(() -> MainActivity.getInstance().logout(), 200)
+                MainActivity.runOnUIDelay(() -> MainActivity.getInstance().logout(false), 200)
         );
         return view;
     }
