@@ -88,7 +88,7 @@
         <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="@{(login.overlayPermission &amp;&amp; login.usageStatPermission &amp;&amp; login.storagePermission) || (login.internetConnection &amp;&amp; login.databaseConnection) ? View.GONE : View.VISIBLE}"
+            android:visibility="@{(login.overlayPermission &amp;&amp; login.usageStatPermission &amp;&amp; login.storagePermission) || (!login.internetConnection || !login.databaseConnection) ? View.GONE : View.VISIBLE}"
             app:flexDirection="column">
 
             <TextView
